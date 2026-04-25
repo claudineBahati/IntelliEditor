@@ -3,33 +3,50 @@ project(IntelliEditor C)
 
 set(CMAKE_C_STANDARD 11)
 
-# Exécutable test_loader
-add_executable(test_loader
-    tests/test_loader.c
-    rules/rule_parser.c
-    rules/rule_engine.c
+
+# 🔹 Inclure headers
+include_directories(src)
+include_directories(C:/msys64/mingw64/include)
+
+# 🔹 Trouver les libs
+find_package(cmocka REQUIRED)
+find_package(cJSON REQUIRED)
+
+# 🔹 Source rules
+set(RULES_SRC
+    src/rules/rule_parser.c
 )
 
-target_include_directories(test_loader PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/rules
+# 🔹 Executable test
+add_executable(test_rules
+    tests/test_rules.c
+    src/rules/rule_parser.c
 )
 
-target_link_libraries(test_loader PRIVATE cjson pcre2-8 cmocka)
+add_custom_command(TARGET test_rules POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        C:/msys64/mingw64/bin/libcjson-1.dll
+        ${CMAKE_BINARY_DIR}
 
 
-add_executable(test_parser
-    tests/test_parser.c
-    rules/rule_parser.c
-    rules/rule_engine.c
 )
 
-target_include_directories(test_parser PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/rules
+add_custom_command(TARGET test_rules POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        C:/msys64/mingw64/bin/libcmocka.dll
+        ${CMAKE_BINARY_DIR}
 )
 
-target_link_libraries(test_parser PRIVATE cjson pcre2-8 cmocka)
 
 
+
+# 🔹 Link libs
+target_link_libraries(test_rules
+    cmocka
+    cjson
+)
+
+# 🔹 Activer tests
 enable_testing()
-add_test(NAME test_loader COMMAND test_loader)
-add_test(NAME test_parser COMMAND test_parser)
+
+add_test(NAME RulesTest COMMAND test_rules)

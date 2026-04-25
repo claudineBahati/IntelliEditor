@@ -1,35 +1,18 @@
-Start testing: Apr 23 18:59 Afrique du Sud
+Start testing: Apr 25 07:47 Afrique du Sud
 ----------------------------------------------------------
-Unable to find executable: C:/Users/Claudine/IntelliEditor/build/test_loader.exe
-1/2 Testing: test_loader
-1/2 Test: test_loader
-Command: ""
+1/1 Testing: RulesTest
+1/1 Test: RulesTest
+Command: "C:/Users/Claudine/IntelliEditor/build/test_rules.exe"
 Directory: C:/Users/Claudine/IntelliEditor/build
-"test_loader" start time: 
+"RulesTest" start time: Apr 25 07:47 Afrique du Sud
 Output:
 ----------------------------------------------------------
 <end of output>
-Test time =   0.00 sec
+Test time =   0.49 sec
 ----------------------------------------------------------
-Test Passed.
-"test_loader" end time: Apr 23 18:59 Afrique du Sud
-"test_loader" time elapsed: 00:00:00
-----------------------------------------------------------
-
-Unable to find executable: C:/Users/Claudine/IntelliEditor/build/test_parser.exe
-2/2 Testing: test_parser
-2/2 Test: test_parser
-Command: ""
-Directory: C:/Users/Claudine/IntelliEditor/build
-"test_parser" start time: 
-Output:
-----------------------------------------------------------
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"test_parser" end time: Apr 23 18:59 Afrique du Sud
-"test_parser" time elapsed: 00:00:00
+Test Failed.
+"RulesTest" end time: Apr 25 07:47 Afrique du Sud
+"RulesTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Apr 23 18:59 Afrique du Sud
+End testing: Apr 25 07:47 Afrique du Sud

@@ -1,3 +1,8 @@
 # ninja log v7
-52	438	7986671264138391	CMakeFiles/test_loader.dir/rules/rule_engine.c.obj	1f1b5308c3f9fb4d
-179	524	7986671265409081	CMakeFiles/test_parser.dir/rules/rule_engine.c.obj	c9796f1d5e456d7b
+6	386	7987941366124233	CMakeFiles/test_rules.dir/tests/test_rules.c.obj	24ea41021b4a5def
+17	467	7987944890900067	CMakeFiles/test_rules.dir/src/rules/rule_parser.c.obj	bd9fa3489c0c37d6
+28	686	7987979540008064	test_rules.exe	cc857629cfc7a6f1
+8	90	7987991901156742	clean	4b7a9ec6ee23bafa
+26	414	7987992019629364	CMakeFiles/test_rules.dir/tests/test_rules.c.obj	24ea41021b4a5def
+55	490	7987992019910536	CMakeFiles/test_rules.dir/src/rules/rule_parser.c.obj	bd9fa3489c0c37d6
+491	1239	7987992024278659	test_rules.exe	cc857629cfc7a6f1

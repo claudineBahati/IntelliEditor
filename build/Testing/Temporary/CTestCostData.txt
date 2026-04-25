@@ -1,5 +1,3 @@
-test_loader 0 0
-test_parser 0 0
+RulesTest 0 0
 ---
-test_loader
-test_parser
+RulesTest
