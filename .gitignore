@@ -1,0 +1,19 @@
+# Build folders
+build/
+bin/
+obj/
+
+# C/C++ object files
+*.o
+*.obj
+
+# Executables
+*.exe
+*.dll
+
+# VS Code settings
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
