@@ -1,18 +1,18 @@
-Start testing: Apr 25 07:47 Afrique du Sud
+Start testing: Apr 26 17:48 Afrique du Sud
 ----------------------------------------------------------
 1/1 Testing: RulesTest
 1/1 Test: RulesTest
 Command: "C:/Users/Claudine/IntelliEditor/build/test_rules.exe"
 Directory: C:/Users/Claudine/IntelliEditor/build
-"RulesTest" start time: Apr 25 07:47 Afrique du Sud
+"RulesTest" start time: Apr 26 17:48 Afrique du Sud
 Output:
 ----------------------------------------------------------
 <end of output>
-Test time =   0.49 sec
+Test time =   0.59 sec
 ----------------------------------------------------------
-Test Failed.
-"RulesTest" end time: Apr 25 07:47 Afrique du Sud
+Test Passed.
+"RulesTest" end time: Apr 26 17:48 Afrique du Sud
 "RulesTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Apr 25 07:47 Afrique du Sud
+End testing: Apr 26 17:48 Afrique du Sud

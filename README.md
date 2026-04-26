@@ -1,28 +1,31 @@
 # IntelliEditor
- Ce projet vise à créer un éditeur de texte intelligent capable d'appliquer des règles dynamiques sur le contenu textuel à l'aide de fichiers de configuration JSON.
 
-La branche actuelle dev-d est dédiée spécifiquement au développement et à la validation du Moteur de Règles (RuleEngine).
+# Description du projet
 
-#  Structure du Projet
+IntelliEditor est un outil d’analyse et de traitement de fichiers texte.
+Il permet de charger des documents, de les nettoyer, de les analyser et de préparer leur indexation pour faciliter la recherche d’informations.
 
-L'architecture suit les principes de la Clean Architecture pour séparer la logique métier de l'infrastructure technique :
+Le projet est développé en équipe dans le cadre d’un travail académique.
 
-src/ : Le module principal
-
-data/rule_template/ : Contient les fichiers de configuration, notamment memoire.json.
-
-tests/ : Contient les scripts de test, comme test_rules.c.
-
-build/ : Répertoire dédié à la compilation (exclu de Git via .gitignore).
-
-# Prérequis et Installation
-
-Pour compiler ce projet sous Windows, assurez-vous d'utiliser l'environnement MSYS2 / MinGW64 avec les bibliothèques suivantes installées :
-
-# Installation des dépendances via le gestionnaire de paquets Pacman
-pacman -S mingw-w64-x86_64-cjson
-pacman -S mingw-w64-x86_64-pcre2
-pacman -S mingw-w64-x86_64-cmocka
-
+# Installation
+  # Prérequis
+    CMake ≥ 3.10
+    Compilateur GCC ou équivalent
+    Make
+    (optionnel) cmocka pour les tests
+    
+# Modules
+ # Dev-A : Infrastructure & Éditeur de texte
+    Responsable des fondations techniques sur lesquelles tout le reste s'appuie.
+    chargée du module : Divine Fatuma
+ # Dev-B : Interface utilisateur Win32 + Scintilla
+    Responsable de l'interface utilisateur.
+    chargée du module : Lumière Tshisabi
+ # Dev-C : LLM & Moteur NLP
+    Responsable de toute l'intelligence artificielle et du traitement linguistique.
+    chargée du module : Déborah Kabedi 
+ # Dev-D :  Moteur de règles & Intégration générale
+     Moteur de règles & Intégration générale
+     chargée du module : Claudine Bahati 
 
 

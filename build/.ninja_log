@@ -1,8 +1,11 @@
 # ninja log v7
-6	386	7987941366124233	CMakeFiles/test_rules.dir/tests/test_rules.c.obj	24ea41021b4a5def
-17	467	7987944890900067	CMakeFiles/test_rules.dir/src/rules/rule_parser.c.obj	bd9fa3489c0c37d6
-28	686	7987979540008064	test_rules.exe	cc857629cfc7a6f1
-8	90	7987991901156742	clean	4b7a9ec6ee23bafa
-26	414	7987992019629364	CMakeFiles/test_rules.dir/tests/test_rules.c.obj	24ea41021b4a5def
-55	490	7987992019910536	CMakeFiles/test_rules.dir/src/rules/rule_parser.c.obj	bd9fa3489c0c37d6
-491	1239	7987992024278659	test_rules.exe	cc857629cfc7a6f1
+54	644	7989209513002663	CMakeFiles/test_rules.dir/tests/test_rules.c.obj	24ea41021b4a5def
+11	666	7989209512577203	CMakeFiles/rules_lib.dir/src/rules/rule_parser.c.obj	d6864a335f461a7c
+667	1367	7989209519132391	librules_lib.a	a87c067c652894af
+1368	2521	7989209526141179	test_rules.exe	4b11cd31490d9950
+18	428	7989211314036923	CMakeFiles/test_rules.dir/tests/test_rules.c.obj	24ea41021b4a5def
+429	1445	7989211318143961	test_rules.exe	4b11cd31490d9950
+19	435	7989214378406500	CMakeFiles/test_rules.dir/tests/test_rules.c.obj	24ea41021b4a5def
+437	1492	7989214382592668	test_rules.exe	4b11cd31490d9950
+17	508	7989217091702533	CMakeFiles/test_rules.dir/tests/test_rules.c.obj	24ea41021b4a5def
+611	1729	7989217097634420	test_rules.exe	4b11cd31490d9950

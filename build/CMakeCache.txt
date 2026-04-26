@@ -228,11 +228,11 @@ IntelliEditor_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 IntelliEditor_SOURCE_DIR:STATIC=C:/Users/Claudine/IntelliEditor
 
-//The directory containing a CMake configuration file for cJSON.
-cJSON_DIR:PATH=C:/msys64/mingw64/lib/cmake/cJSON
-
 //The directory containing a CMake configuration file for cmocka.
 cmocka_DIR:PATH=C:/msys64/mingw64/lib/cmake/cmocka
+
+//Dependencies for the target
+rules_lib_LIB_DEPENDS:STATIC=general;cjson;
 
 
 ########################

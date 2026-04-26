@@ -1,3 +1,2 @@
-RulesTest 0 0
+RulesTest 1 0.586179
 ---
-RulesTest
