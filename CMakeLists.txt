@@ -20,6 +20,8 @@ include_directories(src)
 set(SOURCES
     src/main.c
     src/utils/encoding.c
+    src/editor/gap_buffer.c
+    src/utils/ini_parser.c
 )
 
 # Création de l'exécutable
