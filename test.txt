@@ -1,0 +1,3 @@
+Ceci est un texte de test !
+Il contient plusieurs lignes.
+Et sert à tester le chargement de fichier de la Phase 2.

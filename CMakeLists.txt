@@ -22,6 +22,8 @@ set(SOURCES
     src/utils/encoding.c
     src/editor/gap_buffer.c
     src/utils/ini_parser.c
+    src/editor/file_io.c
+    src/editor/history.c
 )
 
 # Création de l'exécutable
