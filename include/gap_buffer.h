@@ -59,4 +59,29 @@ void gb_move_cursor(GapBuffer* gb, int offset);
  */
 char* gb_get_text(const GapBuffer* gb);
 
+/**
+ * Fonctions de gestion des lignes (Infrastructure Dev A)
+ */
+
+/**
+ * Retourne le nombre total de lignes dans le buffer.
+ */
+size_t gb_get_line_count(const GapBuffer* gb);
+
+/**
+ * Convertit un index absolu en coordonnées (ligne, colonne).
+ * Les lignes et colonnes commencent à 1.
+ */
+void gb_get_pos_coords(const GapBuffer* gb, size_t pos, size_t* out_line, size_t* out_col);
+
+/**
+ * Retourne l'index absolu à partir de coordonnées (ligne, colonne).
+ */
+size_t gb_get_index_from_coords(const GapBuffer* gb, size_t line, size_t col);
+
+/**
+ * Retourne l'index du début d'une ligne spécifique.
+ */
+size_t gb_get_line_start(const GapBuffer* gb, size_t line);
+
 #endif // GAP_BUFFER_H

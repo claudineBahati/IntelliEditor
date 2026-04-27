@@ -140,3 +140,108 @@ char* gb_get_text(const GapBuffer* gb) {
     text[total_len] = '\0';
     return text;
 }
+
+size_t gb_get_line_count(const GapBuffer* gb) {
+    if (!gb) return 0;
+    size_t lines = 1;
+    // Scan pre-gap
+    for (size_t i = 0; i < gb->gap_start; i++) {
+        if (gb->buffer[i] == '\n') lines++;
+    }
+    // Scan post-gap
+    for (size_t i = gb->gap_end; i < gb->size; i++) {
+        if (gb->buffer[i] == '\n') lines++;
+    }
+    return lines;
+}
+
+void gb_get_pos_coords(const GapBuffer* gb, size_t pos, size_t* out_line, size_t* out_col) {
+    if (!gb || !out_line || !out_col) return;
+    
+    size_t line = 1;
+    size_t col = 1;
+    size_t current_pos = 0;
+    
+    // On parcourt virtuellement le buffer jusqu'à 'pos'
+    // Partie pré-gap
+    for (size_t i = 0; i < gb->gap_start && current_pos < pos; i++, current_pos++) {
+        if (gb->buffer[i] == '\n') {
+            line++;
+            col = 1;
+        } else {
+            col++;
+        }
+    }
+    
+    // Si pos est au-delà du gap, on continue dans la partie post-gap
+    if (current_pos < pos) {
+        for (size_t i = gb->gap_end; i < gb->size && current_pos < pos; i++, current_pos++) {
+            if (gb->buffer[i] == '\n') {
+                line++;
+                col = 1;
+            } else {
+                col++;
+            }
+        }
+    }
+    
+    *out_line = line;
+    *out_col = col;
+}
+
+size_t gb_get_index_from_coords(const GapBuffer* gb, size_t line, size_t col) {
+    if (!gb || line == 0) return 0;
+    
+    size_t current_line = 1;
+    size_t current_col = 1;
+    size_t current_index = 0;
+    
+    // Scan pre-gap
+    for (size_t i = 0; i < gb->gap_start; i++, current_index++) {
+        if (current_line == line && current_col == col) return current_index;
+        if (gb->buffer[i] == '\n') {
+            current_line++;
+            current_col = 1;
+        } else {
+            current_col++;
+        }
+    }
+    
+    // Scan post-gap
+    for (size_t i = gb->gap_end; i < gb->size; i++, current_index++) {
+        if (current_line == line && current_col == col) return current_index;
+        if (gb->buffer[i] == '\n') {
+            current_line++;
+            current_col = 1;
+        } else {
+            current_col++;
+        }
+    }
+    
+    return current_index; // Retourne la fin du buffer si non trouvé
+}
+
+size_t gb_get_line_start(const GapBuffer* gb, size_t line) {
+    if (!gb || line <= 1) return 0;
+    
+    size_t current_line = 1;
+    size_t current_index = 0;
+    
+    // Scan pre-gap
+    for (size_t i = 0; i < gb->gap_start; i++, current_index++) {
+        if (gb->buffer[i] == '\n') {
+            current_line++;
+            if (current_line == line) return current_index + 1;
+        }
+    }
+    
+    // Scan post-gap
+    for (size_t i = gb->gap_end; i < gb->size; i++, current_index++) {
+        if (gb->buffer[i] == '\n') {
+            current_line++;
+            if (current_line == line) return current_index + 1;
+        }
+    }
+    
+    return current_index;
+}

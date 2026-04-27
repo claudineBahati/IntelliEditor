@@ -24,6 +24,7 @@ set(SOURCES
     src/utils/ini_parser.c
     src/editor/file_io.c
     src/editor/history.c
+    src/editor/search.c
 )
 
 # Création de l'exécutable
