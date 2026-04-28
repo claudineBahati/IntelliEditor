@@ -1,4 +1,5 @@
 #include "statusbar.h"
+#include "resources.h"
 #include <commctrl.h>
 #include <stdio.h>
 
@@ -7,7 +8,7 @@ HWND Statusbar_Create(HWND hParent) {
         0, STATUSCLASSNAME, NULL,
         WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP,
         0, 0, 0, 0,
-        hParent, (HMENU)3, GetModuleHandle(NULL), NULL
+        hParent, (HMENU)ID_STATUSBAR, GetModuleHandle(NULL), NULL
     );
 
     int parts[4] = { 150, 350, 450, -1 };

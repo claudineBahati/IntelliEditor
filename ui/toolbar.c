@@ -11,15 +11,15 @@ HWND Toolbar_Create(HWND hParent) {
         0, TOOLBARCLASSNAME, NULL,
         WS_CHILD | WS_VISIBLE | TBSTYLE_FLAT | TBSTYLE_TOOLTIPS,
         0, 0, 0, 0,
-        hParent, (HMENU)2, GetModuleHandle(NULL), NULL
+        hParent, (HMENU)ID_TOOLBAR, GetModuleHandle(NULL), NULL
     );
 
     SendMessage(hToolBar, TB_BUTTONSTRUCTSIZE, (WPARAM)sizeof(TBBUTTON), 0);
 
     TBBUTTON tbButtons[3] = {
-        { STD_FILENEW, ID_BTN_NEW, TBSTATE_ENABLED, BTNS_BUTTON, {0}, 0, (INT_PTR)"Nouveau" },
-        { STD_FILEOPEN, ID_BTN_OPEN, TBSTATE_ENABLED, BTNS_BUTTON, {0}, 0, (INT_PTR)"Ouvrir" },
-        { STD_FILESAVE, ID_BTN_SAVE, TBSTATE_ENABLED, BTNS_BUTTON, {0}, 0, (INT_PTR)"Sauvegarder" }
+        { STD_FILENEW, IDM_FILE_NEW, TBSTATE_ENABLED, BTNS_BUTTON, {0}, 0, (INT_PTR)"Nouveau" },
+        { STD_FILEOPEN, IDM_FILE_OPEN, TBSTATE_ENABLED, BTNS_BUTTON, {0}, 0, (INT_PTR)"Ouvrir" },
+        { STD_FILESAVE, IDM_FILE_SAVE, TBSTATE_ENABLED, BTNS_BUTTON, {0}, 0, (INT_PTR)"Sauvegarder" }
     };
 
     TBADDBITMAP tbab;
