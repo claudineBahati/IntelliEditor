@@ -141,6 +141,22 @@ char* gb_get_text(const GapBuffer* gb) {
     return text;
 }
 
+size_t gb_get_length(const GapBuffer* gb) {
+    if (!gb) return 0;
+    return gb->gap_start + (gb->size - gb->gap_end);
+}
+
+char gb_get_char_at(const GapBuffer* gb, size_t index) {
+    if (!gb) return '\0';
+    size_t len = gb_get_length(gb);
+    if (index >= len) return '\0';
+
+    if (index < gb->gap_start) {
+        return gb->buffer[index];
+    }
+    return gb->buffer[index + (gb->gap_end - gb->gap_start)];
+}
+
 size_t gb_get_line_count(const GapBuffer* gb) {
     if (!gb) return 0;
     size_t lines = 1;

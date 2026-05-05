@@ -15,11 +15,14 @@ endif()
 # Dossiers d'inclusion (où chercher les fichiers .h)
 include_directories(include)
 include_directories(src)
+include_directories(src/editor)
 
 # Liste des fichiers source (on commence avec main.c)
 set(SOURCES
     src/main.c
     src/utils/encoding.c
+    src/editor/editor_core.c
+    src/editor/history.c
     src/editor/gap_buffer.c
     src/utils/ini_parser.c
     src/editor/file_io.c
@@ -29,6 +32,13 @@ set(SOURCES
 
 # Création de l'exécutable
 add_executable(IntelliEditor ${SOURCES})
+
+# Ajout des tests unitaires de base pour la fondation technique
+option(BUILD_TESTS "Build unit tests" ON)
+enable_testing()
+if(BUILD_TESTS)
+    add_subdirectory(tests)
+endif()
 
 # Bibliothèques Windows standard nécessaires pour l'interface
 if(WIN32)
