@@ -1,6 +1,8 @@
 #include <windows.h>
 #include "editor_core.h"
 #include "encoding.h"
+#include "tokenizer.h"
+#include "exporter.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -32,6 +34,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     char* text_after_redo = editor_get_text(editor);
     bool redo_ok = (strstr(text_after_redo, "--- TEXTE A ANNULER ---") != NULL);
     free(text_after_redo);
+    
+    // --- Test Tokenizer & Exporter ---
+    tokenizer_run_c(editor);
+    bool export_ok = exporter_to_rtf(editor, "demo_export.rtf");
 
     char result[1024];
     snprintf(result, sizeof(result),
@@ -40,15 +46,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         "Index 20 -> Ligne : %zu, Col : %zu\n"
         "Debut Ligne 3 (Index) : %zu\n\n"
         "Recherche 'IntelliEditor' -> Trouve a l'index : %zu\n"
-        "Test Undo : %s\n"
-        "Test Redo : %s",
+        "Test Undo/Redo : %s\n"
+        "Export RTF (demo_export.rtf) : %s",
         total_lines, line, col, line3_start, search_res, 
-        undo_ok ? "SUCCES" : "ECHEC", 
-        redo_ok ? "SUCCES" : "ECHEC");
+        (undo_ok && redo_ok) ? "SUCCES" : "ECHEC",
+        export_ok ? "SUCCES" : "ECHEC");
 
     wchar_t* utf16_text = utf8_to_utf16(result);
     if (utf16_text) {
-        MessageBoxW(NULL, utf16_text, L"IntelliEditor - Test Undo/Redo", MB_OK | MB_ICONINFORMATION);
+        MessageBoxW(NULL, utf16_text, L"IntelliEditor - Validation Finale", MB_OK | MB_ICONINFORMATION);
         free(utf16_text);
     }
 

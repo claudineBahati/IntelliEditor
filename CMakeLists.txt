@@ -23,10 +23,12 @@ set(SOURCES
     src/utils/encoding.c
     src/editor/editor_core.c
     src/editor/history.c
+    src/editor/formatter.c
+    src/editor/tokenizer.c
+    src/editor/exporter.c
     src/editor/gap_buffer.c
     src/utils/ini_parser.c
     src/editor/file_io.c
-    src/editor/history.c
     src/editor/search.c
 )
 

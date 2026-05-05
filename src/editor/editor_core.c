@@ -21,6 +21,14 @@ EditorContext* editor_create(size_t initial_size) {
         return NULL;
     }
 
+    ctx->formatter = formatter_create(32);
+    if (!ctx->formatter) {
+        history_destroy(ctx->history);
+        gb_destroy(ctx->buffer);
+        free(ctx);
+        return NULL;
+    }
+
     ctx->file_path = NULL;
     ctx->modified = false;
     return ctx;
@@ -29,6 +37,7 @@ EditorContext* editor_create(size_t initial_size) {
 void editor_destroy(EditorContext* ctx) {
     if (!ctx) return;
     if (ctx->file_path) free(ctx->file_path);
+    formatter_destroy(ctx->formatter);
     history_destroy(ctx->history);
     gb_destroy(ctx->buffer);
     free(ctx);
@@ -168,6 +177,46 @@ bool editor_redo(EditorContext* ctx) {
 size_t editor_search(const EditorContext* ctx, const char* query, size_t start_pos, bool case_sensitive) {
     if (!ctx) return (size_t)-1;
     return search_find(ctx->buffer, query, start_pos, case_sensitive);
+}
+
+bool editor_replace(EditorContext* ctx, const char* old_text, const char* new_text, bool all, bool case_sensitive) {
+    if (!ctx || !old_text || !new_text) return false;
+
+    size_t old_len = strlen(old_text);
+    size_t start_pos = 0;
+    bool found_any = false;
+
+    while (true) {
+        size_t pos = search_find(ctx->buffer, old_text, start_pos, case_sensitive);
+        if (pos == (size_t)-1) break;
+
+        found_any = true;
+        
+        // Se déplacer vers la position trouvée
+        size_t current_cursor = ctx->buffer->gap_start;
+        gb_move_cursor(ctx->buffer, (int)pos - (int)current_cursor);
+        
+        // Supprimer l'ancien texte
+        for (size_t i = 0; i < old_len; i++) {
+            gb_delete_delete(ctx->buffer);
+        }
+        history_record(ctx->history, ACTION_DELETE, pos, old_text);
+        
+        // Insérer le nouveau texte
+        gb_insert_string(ctx->buffer, new_text);
+        history_record(ctx->history, ACTION_INSERT, pos, new_text);
+
+        if (!all) break;
+        
+        // Mettre à jour start_pos pour la prochaine recherche
+        start_pos = pos + strlen(new_text);
+        
+        // Sécurité pour éviter les boucles infinies si new_text contient old_text
+        if (start_pos >= gb_get_length(ctx->buffer)) break;
+    }
+
+    if (found_any) ctx->modified = true;
+    return found_any;
 }
 
 bool editor_set_file_path(EditorContext* ctx, const char* filepath) {
