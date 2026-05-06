@@ -1,18 +1,41 @@
-Start testing: Apr 26 17:48 Afrique du Sud
+Start testing: May 06 07:27 Afrique du Sud
 ----------------------------------------------------------
-1/1 Testing: RulesTest
-1/1 Test: RulesTest
+1/2 Testing: RulesTest
+1/2 Test: RulesTest
 Command: "C:/Users/Claudine/IntelliEditor/build/test_rules.exe"
 Directory: C:/Users/Claudine/IntelliEditor/build
-"RulesTest" start time: Apr 26 17:48 Afrique du Sud
+"RulesTest" start time: May 06 07:27 Afrique du Sud
 Output:
 ----------------------------------------------------------
+[==========] tests: Running 1 test(s).
+[ RUN      ] test_load_rules
+START TEST
+AFTER LOAD
+RULE COUNT: 6
+[       OK ] test_load_rules
+[==========] tests: 1 test(s) run.
+[  PASSED  ] 1 test(s).
 <end of output>
-Test time =   0.59 sec
+Test time =   0.64 sec
 ----------------------------------------------------------
 Test Passed.
-"RulesTest" end time: Apr 26 17:48 Afrique du Sud
+"RulesTest" end time: May 06 07:27 Afrique du Sud
 "RulesTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Apr 26 17:48 Afrique du Sud
+2/2 Testing: SectionTest
+2/2 Test: SectionTest
+Command: "C:/Users/Claudine/IntelliEditor/build/test_exist_section.exe"
+Directory: C:/Users/Claudine/IntelliEditor/build
+"SectionTest" start time: May 06 07:27 Afrique du Sud
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   1.30 sec
+----------------------------------------------------------
+Test Passed.
+"SectionTest" end time: May 06 07:27 Afrique du Sud
+"SectionTest" time elapsed: 00:00:01
+----------------------------------------------------------
+
+End testing: May 06 07:27 Afrique du Sud

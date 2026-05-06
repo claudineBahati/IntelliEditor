@@ -8,10 +8,19 @@ include_directories(src)
 
 # 🔹 Trouver les librairies
 find_package(cmocka REQUIRED)
+find_package(cJSON REQUIRED)
 
 # 🔹 ===== MODULE RULES =====
 set(RULES_SRC
     src/rules/rule_parser.c
+)
+add_executable(test_exist_section
+    tests/test_exist_section.c
+    src/rules/rule_parser.c
+    src/rules/rule_engine.c
+    src/rules/checkers/section_checker.c
+    src/rules/checkers/contains_checker.c
+    src/rules/checkers/word_count_checker.c
 )
 
 add_library(rules_lib ${RULES_SRC})
@@ -23,13 +32,20 @@ target_link_libraries(rules_lib
 # 🔹 ===== TESTS =====
 add_executable(test_rules
     tests/test_rules.c
+    
 )
+
 
 target_link_libraries(test_rules
     rules_lib
     cmocka
     cjson
 )
+target_link_libraries(test_exist_section
+    cmocka
+    cjson
+)
+
 
 # 🔹 Copier les DLL (solution Windows fiable)
 add_custom_command(TARGET test_rules POST_BUILD
@@ -64,3 +80,4 @@ add_custom_command(TARGET test_rules POST_BUILD
 enable_testing()
 
 add_test(NAME RulesTest COMMAND test_rules)
+add_test(NAME SectionTest COMMAND test_exist_section)

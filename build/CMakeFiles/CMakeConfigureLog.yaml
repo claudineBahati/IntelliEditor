@@ -1395,3 +1395,82 @@ events:
         - "C:/msys64/mingw64"
         - "C:/Program Files (x86)/IntelliEditor"
 ...
+
+---
+events:
+  -
+    kind: "find_package-v1"
+    backtrace:
+      - "CMakeLists.txt:11 (find_package)"
+    name: "cJSON"
+    configs:
+      -
+        filename: "cJSONConfig.cmake"
+        kind: "cmake"
+      -
+        filename: "cjson-config.cmake"
+        kind: "cmake"
+    version_request:
+      exact: false
+    settings:
+      required: "required_explicit"
+      quiet: false
+      global: false
+      policy_scope: true
+      bypass_provider: false
+      names:
+        - "cJSON"
+      path_suffixes:
+        - ""
+      paths:
+        CMAKE_FIND_USE_CMAKE_PATH: true
+        CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+        CMAKE_FIND_USE_INSTALL_PREFIX: true
+        CMAKE_FIND_USE_PACKAGE_ROOT_PATH: true
+        CMAKE_FIND_USE_CMAKE_PACKAGE_REGISTRY: true
+        CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY: true
+        CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
+    candidates:
+      -
+        path: "C:/Users/Claudine/IntelliEditor/build/CMakeFiles/pkgRedirects/cJSONConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/Users/Claudine/IntelliEditor/build/CMakeFiles/pkgRedirects/cjson-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/msys64/mingw64/cJSONConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "C:/msys64/mingw64/cjson-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+    found:
+      path: "C:/msys64/mingw64/lib/cmake/cJSON/cJSONConfig.cmake"
+      mode: "config"
+      version: "1.7.19"
+    search_context:
+      ENV{PATH}:
+        - "C:\\msys64\\mingw64\\bin"
+        - "C:\\msys64\\usr\\local\\bin"
+        - "C:\\msys64\\usr\\bin"
+        - "C:\\msys64\\usr\\bin"
+        - "C:\\Windows\\System32"
+        - "C:\\Windows"
+        - "C:\\Windows\\System32\\Wbem"
+        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\msys64\\usr\\bin\\site_perl"
+        - "C:\\msys64\\usr\\bin\\vendor_perl"
+        - "C:\\msys64\\usr\\bin\\core_perl"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/IntelliEditor"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/msys64/mingw64"
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "C:/msys64/mingw64"
+        - "C:/Program Files (x86)/IntelliEditor"
+...

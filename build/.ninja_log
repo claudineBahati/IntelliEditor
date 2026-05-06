@@ -1,11 +1,15 @@
 # ninja log v7
-54	644	7989209513002663	CMakeFiles/test_rules.dir/tests/test_rules.c.obj	24ea41021b4a5def
-11	666	7989209512577203	CMakeFiles/rules_lib.dir/src/rules/rule_parser.c.obj	d6864a335f461a7c
-667	1367	7989209519132391	librules_lib.a	a87c067c652894af
-1368	2521	7989209526141179	test_rules.exe	4b11cd31490d9950
-18	428	7989211314036923	CMakeFiles/test_rules.dir/tests/test_rules.c.obj	24ea41021b4a5def
-429	1445	7989211318143961	test_rules.exe	4b11cd31490d9950
-19	435	7989214378406500	CMakeFiles/test_rules.dir/tests/test_rules.c.obj	24ea41021b4a5def
-437	1492	7989214382592668	test_rules.exe	4b11cd31490d9950
-17	508	7989217091702533	CMakeFiles/test_rules.dir/tests/test_rules.c.obj	24ea41021b4a5def
-611	1729	7989217097634420	test_rules.exe	4b11cd31490d9950
+246	1120	7996601870789405	CMakeFiles/test_rules.dir/tests/test_rules.c.obj	24ea41021b4a5def
+19	1015	7996601868517747	CMakeFiles/rules_lib.dir/src/rules/rule_parser.c.obj	d6864a335f461a7c
+57	904	7996602373879746	librules_lib.a	a87c067c652894af
+905	2172	7996602382361775	test_rules.exe	aa50717eac50de4b
+7	1472	7997481695685270	build.ninja	9cde53521cba6290
+7	1472	7997481695526147	C:/Users/Claudine/IntelliEditor/build/cmake_install.cmake	9cde53521cba6290
+7	1472	7997481695582566	C:/Users/Claudine/IntelliEditor/build/CTestTestfile.cmake	9cde53521cba6290
+87	1102	7996601869191294	CMakeFiles/test_exist_section.dir/src/rules/rule_parser.c.obj	4fdeec1204881001
+530	1539	7996583366965076	CMakeFiles/test_exist_section.dir/src/rules/checkers/section_checker.c.obj	1c1128124a6eb084
+791	1590	7996583368323218	CMakeFiles/test_exist_section.dir/src/rules/checkers/contains_checker.c.obj	b044219e615ccdbc
+108	900	7996585503766052	CMakeFiles/test_exist_section.dir/src/rules/checkers/word_count_checker.c.obj	6b5ded9151c56b98
+53	1037	7996601868851148	CMakeFiles/test_exist_section.dir/tests/test_exist_section.c.obj	ecda9b82a0d1f17f
+27	764	7996602373590967	CMakeFiles/test_exist_section.dir/src/rules/rule_engine.c.obj	fab71f824ef61a32
+49	553	7996608227626500	test_exist_section.exe	201bcf85519e888e

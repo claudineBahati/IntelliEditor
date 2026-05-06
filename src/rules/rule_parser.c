@@ -4,7 +4,7 @@
 #include <cjson/cJSON.h>
 #include "rule_parser.h"
 
-// 🔹 Lire fichier entier
+//  Lire fichier entier
 static char* read_file(const char* filename) {
     FILE* file = fopen(filename, "rb");
     if (!file) {
@@ -24,7 +24,7 @@ static char* read_file(const char* filename) {
     return buffer;
 }
 
-// 🔹 Parser une règle
+//  Parser une règle
 static Rule parse_rule(cJSON* json_rule) {
     Rule rule = {0};
 
@@ -41,13 +41,15 @@ static Rule parse_rule(cJSON* json_rule) {
     if (severity) rule.severity = strdup(severity->valuestring);
     if (description) rule.description = strdup(description->valuestring);
     if (check_type) rule.check_type = strdup(check_type->valuestring);
-
-    // 🔹 paramètre simple (string)
+    if (parameter) rule.parameter = strdup(parameter->valuestring);
+    if (flags) rule.flags = strdup(flags->valuestring);
+    
+    //  paramètre simple (string)
     if (parameter && cJSON_IsString(parameter)) {
-        rule.parameter_str = strdup(parameter->valuestring);
+        rule.parameter = strdup(parameter->valuestring);
     }
 
-    // 🔹 flags optionnel
+    //  flags optionnel
     if (flags && cJSON_IsString(flags)) {
         rule.flags = strdup(flags->valuestring);
     }
@@ -55,7 +57,7 @@ static Rule parse_rule(cJSON* json_rule) {
     return rule;
 }
 
-// 🔹 Fonction principale
+//  Fonction principale
 RuleSet* load_rules(const char* file_path) {
     char* json_data = read_file(file_path);
     if (!json_data) return NULL;
@@ -102,7 +104,7 @@ void free_ruleset(RuleSet* ruleset) {
         free(r.severity);
         free(r.description);
         free(r.check_type);
-        free(r.parameter_str);
+        free(r.parameter);
         free(r.flags);
     }
 
