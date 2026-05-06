@@ -7,6 +7,8 @@
 #define IDM_FILE_SAVE   1003
 #define IDM_EDIT_COPY   1004
 #define IDM_EDIT_PASTE  1005
+#define IDM_EDIT_FIND   1007
+#define IDM_EDIT_REPLACE 1008
 #define IDM_VIEW_DARKMODE 1006
 
 // IDs pour les composants UI

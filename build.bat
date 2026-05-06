@@ -8,8 +8,11 @@ gcc -o IntelliEditor.exe ^
     ui/statusbar.c ^
     ui/rules_panel.c ^
     ui/dialogs.c ^
-    -I. -Iui ^
-    -luser32 -lcomctl32 -lgdi32 -lcomdlg32 ^
+    src/rules/rule_parser.c ^
+    src/rules/rule_engine.c ^
+    src/libs/cjson/cJSON.c ^
+    -I. -Iui -Isrc -Isrc/rules -Isrc/models -Isrc/libs -Isrc/libs/cjson ^
+    -luser32 -lcomctl32 -lgdi32 -lcomdlg32 -lshell32 ^
     -mwindows
 
 if %ERRORLEVEL% EQU 0 (

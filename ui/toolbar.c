@@ -21,10 +21,12 @@ HWND Toolbar_Create(HWND hParent) {
 
     SendMessage(hToolBar, TB_BUTTONSTRUCTSIZE, (WPARAM)sizeof(TBBUTTON), 0);
 
-    TBBUTTON tbButtons[5] = {
+    TBBUTTON tbButtons[7] = {
         { STD_FILENEW, IDM_FILE_NEW, TBSTATE_ENABLED, BTNS_BUTTON, {0}, 0, (INT_PTR)"Nouveau" },
         { STD_FILEOPEN, IDM_FILE_OPEN, TBSTATE_ENABLED, BTNS_BUTTON, {0}, 0, (INT_PTR)"Ouvrir" },
         { STD_FILESAVE, IDM_FILE_SAVE, TBSTATE_ENABLED, BTNS_BUTTON, {0}, 0, (INT_PTR)"Sauvegarder" },
+        { 0, 0, TBSTATE_ENABLED, BTNS_SEP, {0}, 0, 0 },
+        { STD_FIND, IDM_EDIT_FIND, TBSTATE_ENABLED, BTNS_BUTTON, {0}, 0, (INT_PTR)"Rechercher" },
         { 0, 0, TBSTATE_ENABLED, BTNS_SEP, {0}, 0, 0 },
         { STD_PROPERTIES, IDM_VIEW_DARKMODE, TBSTATE_ENABLED, BTNS_BUTTON, {0}, 0, (INT_PTR)"Mode Sombre" }
     };
@@ -34,7 +36,7 @@ HWND Toolbar_Create(HWND hParent) {
     tbab.nID = IDB_STD_SMALL_COLOR;
     SendMessage(hToolBar, TB_ADDBITMAP, 0, (LPARAM)&tbab);
 
-    SendMessage(hToolBar, TB_ADDBUTTONS, (WPARAM)5, (LPARAM)&tbButtons);
+    SendMessage(hToolBar, TB_ADDBUTTONS, (WPARAM)7, (LPARAM)&tbButtons);
     SendMessage(hToolBar, TB_AUTOSIZE, 0, 0);
 
     return hToolBar;

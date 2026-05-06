@@ -15,7 +15,11 @@ static HWND hEditor = NULL;
 static HWND hToolbar = NULL;
 static HWND hStatusbar = NULL;
 static HWND hRulesPanel = NULL;
+static HWND hSearchBar = NULL;
+static HWND hSearchEdit = NULL;
+static RuleSet* g_ruleset = NULL;
 static BOOL bDarkMode = FALSE;
+static BOOL bShowSearchBar = FALSE;
 static HBRUSH hbrDarkBackground = NULL;
 
 // Fonction utilitaire pour charger un fichier dans Scintilla
@@ -31,6 +35,13 @@ void LoadFileToEditor(HWND hwnd, const char* szFileName) {
             buffer[length] = '\0';
             Scintilla_SetText(hEditor, buffer);
             free(buffer);
+            
+            // Appliquer les règles après chargement
+            RuleSet* ruleset = load_rules("data/rules.json");
+            if (ruleset) {
+                apply_rules(hEditor, ruleset);
+                free_ruleset(ruleset);
+            }
         }
         fclose(file);
     }
@@ -39,6 +50,8 @@ void LoadFileToEditor(HWND hwnd, const char* szFileName) {
 // Fonction qui gère les messages de la fenêtre
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch (msg) {
+        case WM_CTLCOLORSTATIC:
+        case WM_CTLCOLOREDIT:
         case WM_CTLCOLORLISTBOX: {
             if (bDarkMode) {
                 HDC hdc = (HDC)wParam;
@@ -84,6 +97,47 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 case IDM_EDIT_PASTE:
                     Scintilla_Paste(hEditor);
                     break;
+                case IDM_EDIT_FIND:
+                    bShowSearchBar = !bShowSearchBar;
+                    ShowWindow(hSearchBar, bShowSearchBar ? SW_SHOW : SW_HIDE);
+                    // Déclencher un redimensionnement pour faire de la place
+                    RECT rc;
+                    GetClientRect(hwnd, &rc);
+                    SendMessage(hwnd, WM_SIZE, 0, MAKELPARAM(rc.right, rc.bottom));
+                    if (bShowSearchBar) SetFocus(hSearchEdit);
+                    break;
+                case 1009: { // Bouton 'Suivant'
+                    char szSearch[256];
+                    GetWindowText(hSearchEdit, szSearch, sizeof(szSearch));
+                    if (strlen(szSearch) > 0) {
+                        // Utiliser Scintilla pour chercher le texte
+                        SendMessage(hEditor, SCI_SEARCHANCHOR, 0, 0);
+                        int pos = (int)SendMessage(hEditor, SCI_SEARCHNEXT, SCFIND_NONE, (LPARAM)szSearch);
+                        if (pos != -1) {
+                            SendMessage(hEditor, SCI_SCROLLCARET, 0, 0);
+                        } else {
+                            // Recommencer du début
+                            SendMessage(hEditor, SCI_SETSEL, 0, 0);
+                            SendMessage(hEditor, SCI_SEARCHANCHOR, 0, 0);
+                            SendMessage(hEditor, SCI_SEARCHNEXT, SCFIND_NONE, (LPARAM)szSearch);
+                        }
+                    }
+                    break;
+                }
+                case ID_RULESPANEL: {
+                    if (HIWORD(wParam) == LBN_SELCHANGE) {
+                        int index = (int)SendMessage(hRulesPanel, LB_GETCURSEL, 0, 0);
+                        if (index != LB_ERR && g_ruleset && index < g_ruleset->count) {
+                            Rule* r = &g_ruleset->rules[index];
+                            if (r->parameter_str) {
+                                // Mettre le texte dans la barre de recherche et chercher
+                                SetWindowText(hSearchEdit, r->parameter_str);
+                                SendMessage(hwnd, WM_COMMAND, 1009, 0); // Simuler clic 'Suivant'
+                            }
+                        }
+                    }
+                    break;
+                }
                 case IDM_VIEW_DARKMODE:
                     bDarkMode = !bDarkMode;
                     Scintilla_SetTheme(hEditor, bDarkMode);
@@ -151,20 +205,26 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             hRulesPanel = RulesPanel_Create(hwnd, 0, 0, 0, 0, ID_RULESPANEL);
 
             // Charger les règles métier
-            RuleSet* ruleset = load_rules("data/rules.json");
-            if (ruleset) {
+            g_ruleset = load_rules("data/rules.json");
+            if (g_ruleset) {
                 RulesPanel_Clear(hRulesPanel);
-                for (int i = 0; i < ruleset->count; i++) {
+                for (int i = 0; i < g_ruleset->count; i++) {
                     char buffer[256];
-                    snprintf(buffer, sizeof(buffer), "[%s] %s", ruleset->rules[i].id, ruleset->rules[i].description);
+                    snprintf(buffer, sizeof(buffer), "[%s] %s", g_ruleset->rules[i].id, g_ruleset->rules[i].description);
                     RulesPanel_AddRule(hRulesPanel, buffer);
                 }
-                free_ruleset(ruleset);
+                // Appliquer les règles initiales (si texte présent)
+                apply_rules(hEditor, g_ruleset);
             }
 
             // Créer la zone Scintilla via le wrapper
             hEditor = Scintilla_Create(hwnd, 0, 0, 0, 0, ID_EDITOR);
 
+            // Créer la barre de recherche (cachée au début)
+            hSearchBar = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_BORDER, 0, 0, 0, 0, hwnd, NULL, GetModuleHandle(NULL), NULL);
+            hSearchEdit = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 10, 5, 200, 25, hSearchBar, NULL, GetModuleHandle(NULL), NULL);
+            CreateWindow("BUTTON", "Suivant", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 220, 5, 80, 25, hSearchBar, (HMENU)1009, GetModuleHandle(NULL), NULL);
+            
             // Activer le Drag & Drop
             DragAcceptFiles(hwnd, TRUE);
             break;
@@ -191,7 +251,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
             // L'espace restant pour l'éditeur et le panneau
             int yEditor = tbHeight;
-            int hEditorHeight = height - tbHeight - sbHeight;
+            int searchBarHeight = bShowSearchBar ? 40 : 0;
+            
+            if (bShowSearchBar) {
+                SetWindowPos(hSearchBar, NULL, 0, yEditor, width, searchBarHeight, SWP_NOZORDER | SWP_NOACTIVATE);
+                yEditor += searchBarHeight;
+            }
+
+            int hEditorHeight = height - yEditor - sbHeight;
             
             // Largeur du panneau des règles (ex: 250px)
             int rulesWidth = 250;
@@ -209,6 +276,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
         case WM_DESTROY:
             if (hbrDarkBackground) DeleteObject(hbrDarkBackground);
+            if (g_ruleset) free_ruleset(g_ruleset);
             PostQuitMessage(0);
             return 0;
             
@@ -261,6 +329,8 @@ AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hFileMenu, "Fichier");
 HMENU hEditMenu = CreatePopupMenu();
 AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_COPY, "Copier");
 AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_PASTE, "Coller");
+AppendMenu(hEditMenu, MF_SEPARATOR, 0, NULL);
+AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_FIND, "Rechercher...\tCtrl+F");
 AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hEditMenu, "Édition");
 
 // Menu Affichage
@@ -278,9 +348,10 @@ SetMenu(hwnd, hMenu);
     ACCEL accels[] = {
         { FCONTROL | FVIRTKEY, 'N', IDM_FILE_NEW },
         { FCONTROL | FVIRTKEY, 'O', IDM_FILE_OPEN },
-        { FCONTROL | FVIRTKEY, 'S', IDM_FILE_SAVE }
+        { FCONTROL | FVIRTKEY, 'S', IDM_FILE_SAVE },
+        { FCONTROL | FVIRTKEY, 'F', IDM_EDIT_FIND }
     };
-    HACCEL hAccel = CreateAcceleratorTable(accels, 3);
+    HACCEL hAccel = CreateAcceleratorTable(accels, 4);
 
     // Boucle de messages
     MSG msg = {0};
