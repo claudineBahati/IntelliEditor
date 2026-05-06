@@ -1,5 +1,10 @@
+#define _WIN32_IE 0x0500
 #include "toolbar.h"
 #include <commctrl.h>
+
+#ifndef TB_SETBKCOLOR
+#define TB_SETBKCOLOR (WM_USER + 60)
+#endif
 
 HWND Toolbar_Create(HWND hParent) {
     INITCOMMONCONTROLSEX icex;
@@ -16,10 +21,12 @@ HWND Toolbar_Create(HWND hParent) {
 
     SendMessage(hToolBar, TB_BUTTONSTRUCTSIZE, (WPARAM)sizeof(TBBUTTON), 0);
 
-    TBBUTTON tbButtons[3] = {
+    TBBUTTON tbButtons[5] = {
         { STD_FILENEW, IDM_FILE_NEW, TBSTATE_ENABLED, BTNS_BUTTON, {0}, 0, (INT_PTR)"Nouveau" },
         { STD_FILEOPEN, IDM_FILE_OPEN, TBSTATE_ENABLED, BTNS_BUTTON, {0}, 0, (INT_PTR)"Ouvrir" },
-        { STD_FILESAVE, IDM_FILE_SAVE, TBSTATE_ENABLED, BTNS_BUTTON, {0}, 0, (INT_PTR)"Sauvegarder" }
+        { STD_FILESAVE, IDM_FILE_SAVE, TBSTATE_ENABLED, BTNS_BUTTON, {0}, 0, (INT_PTR)"Sauvegarder" },
+        { 0, 0, TBSTATE_ENABLED, BTNS_SEP, {0}, 0, 0 },
+        { STD_PROPERTIES, IDM_VIEW_DARKMODE, TBSTATE_ENABLED, BTNS_BUTTON, {0}, 0, (INT_PTR)"Mode Sombre" }
     };
 
     TBADDBITMAP tbab;
@@ -27,8 +34,19 @@ HWND Toolbar_Create(HWND hParent) {
     tbab.nID = IDB_STD_SMALL_COLOR;
     SendMessage(hToolBar, TB_ADDBITMAP, 0, (LPARAM)&tbab);
 
-    SendMessage(hToolBar, TB_ADDBUTTONS, (WPARAM)3, (LPARAM)&tbButtons);
+    SendMessage(hToolBar, TB_ADDBUTTONS, (WPARAM)5, (LPARAM)&tbButtons);
     SendMessage(hToolBar, TB_AUTOSIZE, 0, 0);
 
     return hToolBar;
+}
+
+void Toolbar_SetDarkMode(HWND hToolbar, BOOL bDark) {
+    if (bDark) {
+        SendMessage(hToolbar, TB_SETBKCOLOR, 0, (LPARAM)RGB(45, 45, 45));
+    } else {
+        SendMessage(hToolbar, TB_SETBKCOLOR, 0, (LPARAM)CLR_DEFAULT);
+    }
+    
+    // Forcer le redessin
+    InvalidateRect(hToolbar, NULL, TRUE);
 }

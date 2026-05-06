@@ -1,5 +1,7 @@
 #include "scintilla_wrapper.h"
 #include <Scintilla.h>
+#include <ctype.h>
+#include <stdlib.h>
 
 static HMODULE hSciLexer = NULL;
 
@@ -77,6 +79,33 @@ void Scintilla_Copy(HWND hScintilla) {
 
 void Scintilla_Paste(HWND hScintilla) {
     SendMessage(hScintilla, SCI_PASTE, 0, 0);
+}
+
+int Scintilla_GetWordCount(HWND hScintilla) {
+    if (!hScintilla) return 0;
+    int length = Scintilla_GetTextLength(hScintilla);
+    if (length == 0) return 0;
+
+    char* buffer = malloc(length + 1);
+    if (!buffer) return 0;
+
+    Scintilla_GetText(hScintilla, buffer, length + 1);
+
+    int count = 0;
+    BOOL inWord = FALSE;
+    for (int i = 0; i < length; i++) {
+        if (isspace((unsigned char)buffer[i])) {
+            inWord = FALSE;
+        } else {
+            if (!inWord) {
+                count++;
+                inWord = TRUE;
+            }
+        }
+    }
+
+    free(buffer);
+    return count;
 }
 
 void Scintilla_SetTheme(HWND hScintilla, BOOL darkMode) {

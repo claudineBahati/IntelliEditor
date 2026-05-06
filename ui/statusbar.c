@@ -34,3 +34,9 @@ void Statusbar_Update(HWND hStatusbar, int words, int line, int col) {
     SendMessage(hStatusbar, SB_SETTEXT, 0, (LPARAM)bufWords);
     SendMessage(hStatusbar, SB_SETTEXT, 1, (LPARAM)bufPos);
 }
+
+void Statusbar_SetDarkMode(HWND hStatusbar, BOOL bDark) {
+    if (!hStatusbar) return;
+    COLORREF bg = bDark ? RGB(45, 45, 45) : CLR_DEFAULT;
+    SendMessage(hStatusbar, SB_SETBKCOLOR, 0, (LPARAM)bg);
+}

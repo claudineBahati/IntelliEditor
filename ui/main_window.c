@@ -8,6 +8,7 @@
 #include "resources.h"
 #include <stdio.h>
 #include <Scintilla.h>
+#include "rule_parser.h"
 
 // Déclaration de l'éditeur Scintilla
 static HWND hEditor = NULL;
@@ -15,6 +16,7 @@ static HWND hToolbar = NULL;
 static HWND hStatusbar = NULL;
 static HWND hRulesPanel = NULL;
 static BOOL bDarkMode = FALSE;
+static HBRUSH hbrDarkBackground = NULL;
 
 // Fonction utilitaire pour charger un fichier dans Scintilla
 void LoadFileToEditor(HWND hwnd, const char* szFileName) {
@@ -37,6 +39,15 @@ void LoadFileToEditor(HWND hwnd, const char* szFileName) {
 // Fonction qui gère les messages de la fenêtre
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch (msg) {
+        case WM_CTLCOLORLISTBOX: {
+            if (bDarkMode) {
+                HDC hdc = (HDC)wParam;
+                SetTextColor(hdc, RGB(220, 220, 220));
+                SetBkColor(hdc, RGB(45, 45, 45));
+                return (LRESULT)hbrDarkBackground;
+            }
+            break;
+        }
         case WM_COMMAND: {
             int wmId = LOWORD(wParam);
             switch (wmId) {
@@ -76,7 +87,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 case IDM_VIEW_DARKMODE:
                     bDarkMode = !bDarkMode;
                     Scintilla_SetTheme(hEditor, bDarkMode);
+                    Toolbar_SetDarkMode(hToolbar, bDarkMode);
+                    Statusbar_SetDarkMode(hStatusbar, bDarkMode);
                     CheckMenuItem(GetMenu(hwnd), IDM_VIEW_DARKMODE, bDarkMode ? MF_CHECKED : MF_UNCHECKED);
+                    
+                    // Forcer le rafraîchissement global
+                    InvalidateRect(hwnd, NULL, TRUE);
+                    InvalidateRect(hToolbar, NULL, TRUE);
+                    InvalidateRect(hStatusbar, NULL, TRUE);
+                    InvalidateRect(hRulesPanel, NULL, TRUE);
                     break;
             }
             break;
@@ -92,12 +111,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
         case WM_NOTIFY: {
             NMHDR* phdr = (NMHDR*)lParam;
+            
+            // Gestion Scintilla
             if (phdr->hwndFrom == hEditor && phdr->code == SCN_UPDATEUI) {
                 int pos = (int)SendMessage(hEditor, SCI_GETCURRENTPOS, 0, 0);
                 int line = (int)SendMessage(hEditor, SCI_LINEFROMPOSITION, pos, 0);
                 int col = (int)SendMessage(hEditor, SCI_GETCOLUMN, pos, 0);
-                // On peut aussi calculer le nombre de mots ici si on veut
-                Statusbar_Update(hStatusbar, 0, line + 1, col + 1);
+                int words = Scintilla_GetWordCount(hEditor);
+                Statusbar_Update(hStatusbar, words, line + 1, col + 1);
+            }
+            
+            // Custom Draw pour le look Premium (Toolbar et Statusbar)
+            if (bDarkMode && (phdr->code == NM_CUSTOMDRAW)) {
+                LPNMCUSTOMDRAW lpnmcd = (LPNMCUSTOMDRAW)lParam;
+                if (phdr->hwndFrom == hToolbar || phdr->hwndFrom == hStatusbar) {
+                    if (lpnmcd->dwDrawStage == CDDS_PREPAINT) {
+                        return CDRF_NOTIFYITEMDRAW;
+                    }
+                    if (lpnmcd->dwDrawStage == CDDS_ITEMPREPAINT) {
+                        SetTextColor(lpnmcd->hdc, RGB(220, 220, 220));
+                        SetBkMode(lpnmcd->hdc, TRANSPARENT);
+                        return CDRF_DODEFAULT;
+                    }
+                }
             }
             break;
         }
@@ -108,8 +144,23 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             // Créer la barre de statut
             hStatusbar = Statusbar_Create(hwnd);
 
+            // Créer le pinceau pour le fond sombre
+            hbrDarkBackground = CreateSolidBrush(RGB(45, 45, 45));
+
             // Créer le panneau des règles (à droite)
             hRulesPanel = RulesPanel_Create(hwnd, 0, 0, 0, 0, ID_RULESPANEL);
+
+            // Charger les règles métier
+            RuleSet* ruleset = load_rules("data/rules.json");
+            if (ruleset) {
+                RulesPanel_Clear(hRulesPanel);
+                for (int i = 0; i < ruleset->count; i++) {
+                    char buffer[256];
+                    snprintf(buffer, sizeof(buffer), "[%s] %s", ruleset->rules[i].id, ruleset->rules[i].description);
+                    RulesPanel_AddRule(hRulesPanel, buffer);
+                }
+                free_ruleset(ruleset);
+            }
 
             // Créer la zone Scintilla via le wrapper
             hEditor = Scintilla_Create(hwnd, 0, 0, 0, 0, ID_EDITOR);
@@ -157,6 +208,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
 
         case WM_DESTROY:
+            if (hbrDarkBackground) DeleteObject(hbrDarkBackground);
             PostQuitMessage(0);
             return 0;
             
@@ -200,9 +252,9 @@ HMENU hMenu = CreateMenu();
 
 // Menu Fichier
 HMENU hFileMenu = CreatePopupMenu();
-AppendMenu(hFileMenu, MF_STRING, IDM_FILE_NEW, "Nouveau");
-AppendMenu(hFileMenu, MF_STRING, IDM_FILE_OPEN, "Ouvrir");
-AppendMenu(hFileMenu, MF_STRING, IDM_FILE_SAVE, "Sauvegarder");
+AppendMenu(hFileMenu, MF_STRING, IDM_FILE_NEW, "Nouveau\tCtrl+N");
+AppendMenu(hFileMenu, MF_STRING, IDM_FILE_OPEN, "Ouvrir\tCtrl+O");
+AppendMenu(hFileMenu, MF_STRING, IDM_FILE_SAVE, "Sauvegarder\tCtrl+S");
 AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hFileMenu, "Fichier");
 
 // Menu Édition
@@ -222,12 +274,23 @@ SetMenu(hwnd, hMenu);
 
     ShowWindow(hwnd, nCmdShow);
 
+    // Définir les raccourcis clavier (Accelerators)
+    ACCEL accels[] = {
+        { FCONTROL | FVIRTKEY, 'N', IDM_FILE_NEW },
+        { FCONTROL | FVIRTKEY, 'O', IDM_FILE_OPEN },
+        { FCONTROL | FVIRTKEY, 'S', IDM_FILE_SAVE }
+    };
+    HACCEL hAccel = CreateAcceleratorTable(accels, 3);
+
     // Boucle de messages
     MSG msg = {0};
     while (GetMessage(&msg, NULL, 0, 0)) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+        if (!TranslateAccelerator(hwnd, hAccel, &msg)) {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
     }
 
+    DestroyAcceleratorTable(hAccel);
     return 0;
 }

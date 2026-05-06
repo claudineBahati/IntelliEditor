@@ -21,3 +21,15 @@ HWND RulesPanel_Create(HWND hParent, int x, int y, int width, int height, int id
 
     return hList;
 }
+
+void RulesPanel_AddRule(HWND hRulesPanel, const char* ruleText) {
+    if (hRulesPanel && ruleText) {
+        SendMessage(hRulesPanel, LB_ADDSTRING, 0, (LPARAM)ruleText);
+    }
+}
+
+void RulesPanel_Clear(HWND hRulesPanel) {
+    if (hRulesPanel) {
+        SendMessage(hRulesPanel, LB_RESETCONTENT, 0, 0);
+    }
+}

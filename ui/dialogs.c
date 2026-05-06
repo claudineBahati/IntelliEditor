@@ -1,5 +1,6 @@
 #include "dialogs.h"
 
+
 bool Dialog_OpenFile(HWND hParent, char* outFilePath, int maxLen) {
     OPENFILENAME ofn;
     ZeroMemory(&ofn, sizeof(ofn));

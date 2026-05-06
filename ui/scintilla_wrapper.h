@@ -19,6 +19,7 @@ int Scintilla_GetTextLength(HWND hScintilla);
 void Scintilla_Clear(HWND hScintilla);
 void Scintilla_Copy(HWND hScintilla);
 void Scintilla_Paste(HWND hScintilla);
+int Scintilla_GetWordCount(HWND hScintilla);
 
 // Thèmes et Affichage
 void Scintilla_SetTheme(HWND hScintilla, BOOL darkMode);
