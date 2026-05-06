@@ -17,6 +17,10 @@ static HWND hStatusbar = NULL;
 static HWND hRulesPanel = NULL;
 static HWND hSearchBar = NULL;
 static HWND hSearchEdit = NULL;
+static HWND hReplaceEdit = NULL;
+static HWND hBtnNext = NULL;
+static HWND hBtnReplace = NULL;
+static HWND hBtnReplaceAll = NULL;
 static RuleSet* g_ruleset = NULL;
 static BOOL bDarkMode = FALSE;
 static BOOL bShowSearchBar = FALSE;
@@ -124,6 +128,44 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     }
                     break;
                 }
+                case 1010: { // Bouton 'Remplacer'
+                    char szSearch[256], szReplace[256];
+                    GetWindowText(hSearchEdit, szSearch, sizeof(szSearch));
+                    GetWindowText(hReplaceEdit, szReplace, sizeof(szReplace));
+                    if (strlen(szSearch) > 0) {
+                        SendMessage(hEditor, SCI_TARGETFROMSELECTION, 0, 0);
+                        SendMessage(hEditor, SCI_REPLACETARGET, strlen(szReplace), (LPARAM)szReplace);
+                        // Chercher l'occurrence suivante
+                        SendMessage(hwnd, WM_COMMAND, 1009, 0);
+                    }
+                    break;
+                }
+                case 1011: { // Bouton 'Tous' (Replace All)
+                    char szSearch[256], szReplace[256];
+                    GetWindowText(hSearchEdit, szSearch, sizeof(szSearch));
+                    GetWindowText(hReplaceEdit, szReplace, sizeof(szReplace));
+                    if (strlen(szSearch) > 0) {
+                        SendMessage(hEditor, SCI_BEGINUNDOACTION, 0, 0);
+                        int pos = 0;
+                        int length = (int)SendMessage(hEditor, SCI_GETTEXTLENGTH, 0, 0);
+                        while (pos < length) {
+                            SendMessage(hEditor, SCI_SETTARGETSTART, pos, 0);
+                            SendMessage(hEditor, SCI_SETTARGETEND, length, 0);
+                            int found = (int)SendMessage(hEditor, SCI_SEARCHINTARGET, strlen(szSearch), (LPARAM)szSearch);
+                            if (found == -1) break;
+                            SendMessage(hEditor, SCI_REPLACETARGET, strlen(szReplace), (LPARAM)szReplace);
+                            pos = (int)SendMessage(hEditor, SCI_GETTARGETEND, 0, 0);
+                            length = (int)SendMessage(hEditor, SCI_GETTEXTLENGTH, 0, 0);
+                        }
+                        SendMessage(hEditor, SCI_ENDUNDOACTION, 0, 0);
+                    }
+                    break;
+                }
+                case 1020:
+                case 1021:
+                case 1022:
+                    MessageBox(hwnd, "Module IA (Dev-C) en cours d'intégration...", "Intelligence Artificielle", MB_OK | MB_ICONINFORMATION);
+                    break;
                 case ID_RULESPANEL: {
                     if (HIWORD(wParam) == LBN_SELCHANGE) {
                         int index = (int)SendMessage(hRulesPanel, LB_GETCURSEL, 0, 0);
@@ -222,8 +264,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
             // Créer la barre de recherche (cachée au début)
             hSearchBar = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_BORDER, 0, 0, 0, 0, hwnd, NULL, GetModuleHandle(NULL), NULL);
-            hSearchEdit = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 10, 5, 200, 25, hSearchBar, NULL, GetModuleHandle(NULL), NULL);
-            CreateWindow("BUTTON", "Suivant", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 220, 5, 80, 25, hSearchBar, (HMENU)1009, GetModuleHandle(NULL), NULL);
+            
+            CreateWindow("STATIC", "Chercher:", WS_CHILD | WS_VISIBLE, 5, 10, 60, 20, hSearchBar, NULL, GetModuleHandle(NULL), NULL);
+            hSearchEdit = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 70, 7, 150, 25, hSearchBar, NULL, GetModuleHandle(NULL), NULL);
+            
+            CreateWindow("STATIC", "Remplacer:", WS_CHILD | WS_VISIBLE, 230, 10, 70, 20, hSearchBar, NULL, GetModuleHandle(NULL), NULL);
+            hReplaceEdit = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 305, 7, 150, 25, hSearchBar, NULL, GetModuleHandle(NULL), NULL);
+            
+            hBtnNext = CreateWindow("BUTTON", "Suivant", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 465, 7, 80, 25, hSearchBar, (HMENU)1009, GetModuleHandle(NULL), NULL);
+            hBtnReplace = CreateWindow("BUTTON", "Remplacer", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 550, 7, 100, 25, hSearchBar, (HMENU)1010, GetModuleHandle(NULL), NULL);
+            hBtnReplaceAll = CreateWindow("BUTTON", "Tous", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 655, 7, 60, 25, hSearchBar, (HMENU)1011, GetModuleHandle(NULL), NULL);
             
             // Activer le Drag & Drop
             DragAcceptFiles(hwnd, TRUE);
@@ -337,6 +387,13 @@ AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hEditMenu, "Édition");
 HMENU hViewMenu = CreatePopupMenu();
 AppendMenu(hViewMenu, MF_STRING, IDM_VIEW_DARKMODE, "Mode Sombre");
 AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hViewMenu, "Affichage");
+
+// Menu IA (Intégration Dev-C)
+HMENU hAIMenu = CreatePopupMenu();
+AppendMenu(hAIMenu, MF_STRING, 1020, "Résumé du texte");
+AppendMenu(hAIMenu, MF_STRING, 1021, "Améliorer le style");
+AppendMenu(hAIMenu, MF_STRING, 1022, "Correction Grammaticale");
+AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hAIMenu, "IA & NLP");
 
 // Attacher la barre de menus à la fenêtre
 SetMenu(hwnd, hMenu);
