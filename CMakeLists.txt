@@ -6,14 +6,23 @@ set(CMAKE_C_STANDARD 11)
 # 🔹 Inclure headers du projet
 include_directories(src)
 
-# 🔹 Trouver les librairies
-find_package(cmocka REQUIRED)
-find_package(cJSON REQUIRED)
-
 # 🔹 ===== MODULE RULES =====
 set(RULES_SRC
     src/rules/rule_parser.c
+    src/rules/rule_engine.c
+    src/rules/checkers/section_checker.c
+    src/rules/checkers/contains_checker.c
+    src/rules/checkers/word_count_checker.c
+    src/rules/checkers/regex_checker.c
 )
+
+add_library(rules_lib STATIC ${RULES_SRC})
+target_link_libraries(rules_lib cjson pcre2-8)
+
+# 🔹 ===== TESTS =====
+add_executable(test_rules tests/test_rules.c)
+target_link_libraries(test_rules rules_lib cmocka cjson)
+
 add_executable(test_exist_section
     tests/test_exist_section.c
     src/rules/rule_parser.c
@@ -21,63 +30,66 @@ add_executable(test_exist_section
     src/rules/checkers/section_checker.c
     src/rules/checkers/contains_checker.c
     src/rules/checkers/word_count_checker.c
+    src/rules/checkers/regex_checker.c
 )
+target_link_libraries(test_exist_section rules_lib cmocka cjson pcre2-8)
 
-add_library(rules_lib ${RULES_SRC})
-
-target_link_libraries(rules_lib
-    cjson
+add_executable(test_regex_checker
+    tests/test_regex_checker.c
+    src/rules/checkers/regex_checker.c
 )
+target_link_libraries(test_regex_checker rules_lib cmocka pcre2-8)
 
-# 🔹 ===== TESTS =====
-add_executable(test_rules
-    tests/test_rules.c
-    
-)
+# 🔹 Copier les DLL runtime (Windows)
+set(MSYS2_BIN_DIR "C:/msys64/mingw64/bin")
 
-
-target_link_libraries(test_rules
-    rules_lib
-    cmocka
-    cjson
-)
-target_link_libraries(test_exist_section
-    cmocka
-    cjson
-)
-
-
-# 🔹 Copier les DLL (solution Windows fiable)
+# DLL pour cjson
 add_custom_command(TARGET test_rules POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        C:/msys64/mingw64/bin/libcjson-1.dll
+        ${MSYS2_BIN_DIR}/libcjson-1.dll
         ${CMAKE_BINARY_DIR}
 )
 
+# DLL pour cmocka
 add_custom_command(TARGET test_rules POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        C:/msys64/mingw64/bin/libcmocka.dll
+        ${MSYS2_BIN_DIR}/libcmocka.dll
         ${CMAKE_BINARY_DIR}
 )
 
+# DLL runtime GCC/threads
 add_custom_command(TARGET test_rules POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        C:/msys64/mingw64/bin/libgcc_s_seh-1.dll
+        ${MSYS2_BIN_DIR}/libgcc_s_seh-1.dll
+        ${CMAKE_BINARY_DIR}
+)
+add_custom_command(TARGET test_rules POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${MSYS2_BIN_DIR}/libwinpthread-1.dll
         ${CMAKE_BINARY_DIR}
 )
 
-add_custom_command(TARGET test_rules POST_BUILD
+# Copier la DLL PCRE2 (⚠️ pas le .dll.a)
+add_custom_command(TARGET test_exist_section POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        C:/msys64/mingw64/bin/libwinpthread-1.dll
+        ${MSYS2_BIN_DIR}/libpcre2-8-0.dll
         ${CMAKE_BINARY_DIR}
 )
+add_custom_command(TARGET test_regex_checker POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${MSYS2_BIN_DIR}/libpcre2-8-0.dll
+        ${CMAKE_BINARY_DIR}
+)
+
+# Copier data
 add_custom_command(TARGET test_rules POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/data
         ${CMAKE_BINARY_DIR}/data
 )
+
 # 🔹 Activer les tests
 enable_testing()
-
 add_test(NAME RulesTest COMMAND test_rules)
 add_test(NAME SectionTest COMMAND test_exist_section)
+add_test(NAME RegexCheckerTest COMMAND test_regex_checker)

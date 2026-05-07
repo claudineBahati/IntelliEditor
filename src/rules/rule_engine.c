@@ -4,6 +4,7 @@
 #include "rules/rule_engine.h"
 #include "checkers/section_checker.h"
 #include "checkers/contains_checker.h"
+#include "rules/checkers/regex_checker.h"
 
 RuleResult* evaluate_rules(RuleSet* ruleset, const char* text, int* result_count) {
     *result_count = ruleset->count;
@@ -24,7 +25,16 @@ RuleResult* evaluate_rules(RuleSet* ruleset, const char* text, int* result_count
         } else if (strcmp(rule.check_type, "contains") == 0) {
             success = check_contains(text, rule.parameter);
 
-        } else {
+        } 
+        else if (strcmp(rule.check_type, "regex_forbidden") == 0) {
+
+            success = check_regex_forbidden(
+                text,
+                rule.parameter,
+                rule.flags
+            );
+        }
+        else {
             success = 0;
         }
 

@@ -1,23 +1,30 @@
 #define PCRE2_CODE_UNIT_WIDTH 8
-#include <pcre2.h>
+
 #include <string.h>
+#include <pcre2.h>
 
-int check_regex_forbidden(const char* text, const char* pattern, const char* flags) {
+#include "rules/checkers/regex_checker.h"
 
-    if (!text || !pattern) return 1;
+int check_regex_forbidden(
+    const char* text,
+    const char* pattern,
+    const char* flags
+) {
 
-    int errornumber;
-    PCRE2_SIZE erroroffset;
+    if (!text || !pattern)
+        return 1;
 
     uint32_t options = 0;
 
-    //  gestion flags
+    // case_insensitive
     if (flags && strstr(flags, "case_insensitive")) {
         options |= PCRE2_CASELESS;
     }
 
-    // compilation regex
-    pcre2_code *re = pcre2_compile(
+    int errornumber;
+    PCRE2_SIZE erroroffset;
+
+    pcre2_code* re = pcre2_compile(
         (PCRE2_SPTR)pattern,
         PCRE2_ZERO_TERMINATED,
         options,
@@ -26,11 +33,13 @@ int check_regex_forbidden(const char* text, const char* pattern, const char* fla
         NULL
     );
 
-    if (re == NULL) {
-        return 1; // ignore si regex invalide
+    // erreur compilation regex
+    if (!re) {
+        return 1;
     }
 
-    pcre2_match_data *match_data = pcre2_match_data_create_from_pattern(re, NULL);
+    pcre2_match_data* match_data =
+        pcre2_match_data_create_from_pattern(re, NULL);
 
     int rc = pcre2_match(
         re,
@@ -45,10 +54,10 @@ int check_regex_forbidden(const char* text, const char* pattern, const char* fla
     pcre2_match_data_free(match_data);
     pcre2_code_free(re);
 
-    
+    // si regex trouvée => FAIL
     if (rc >= 0) {
-        return 0; 
+        return 0;
     }
 
-    return 1; 
+    return 1;
 }
