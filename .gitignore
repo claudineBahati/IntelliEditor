@@ -1,0 +1,6 @@
+build_editor/
+models/
+llama.cpp/
+*.exe
+*.o
+*.obj
