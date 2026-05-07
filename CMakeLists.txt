@@ -31,6 +31,7 @@ set(SOURCES
     src/utils/ini_parser.c
     src/editor/file_io.c
     src/editor/search.c
+    src/utils/memory_pool.c
 )
 
 # Création de l'exécutable

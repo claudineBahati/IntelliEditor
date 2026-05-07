@@ -168,6 +168,17 @@ static void test_editor_undo_redo(void) {
     assert(strcmp(text8, "Salut Intelli Salut World") == 0);
     free(text8);
 
+    // Test Undo atomique pour Replace All
+    editor_replace_all(ctx, "Salut", "Bonjour", true);
+    char* text9 = editor_get_text(ctx);
+    assert(strcmp(text9, "Bonjour Intelli Bonjour World") == 0);
+    free(text9);
+
+    editor_undo(ctx);
+    char* text10 = editor_get_text(ctx);
+    assert(strcmp(text10, "Salut Intelli Salut World") == 0); // Un seul undo ramène tout
+    free(text10);
+
     editor_destroy(ctx);
 }
 
@@ -212,6 +223,11 @@ static void test_tokenizer(void) {
     assert(formatter_get_style_at(ctx->formatter, 15, &style));
     assert(style.italic == true);
 
+    // "10" est un nombre (index 9-10)
+    assert(formatter_get_style_at(ctx->formatter, 9, &style));
+    assert(style.bg_color == 0xFFFF00);
+    assert(style.underline == true);
+
     editor_destroy(ctx);
 }
 
@@ -237,6 +253,36 @@ static void test_exporter(void) {
     remove("test_output.txt");
 
     editor_destroy(ctx);
+}
+
+static void test_ied_format(void) {
+    printf("Running test_ied_format...\n");
+    fflush(stdout);
+
+    EditorContext* ctx = editor_create(128);
+    editor_insert_text(ctx, "Test IED format with styles");
+    
+    TextStyle style = {0xFF00FF, 0, true, false, true}; // Violet, Gras, Souligné
+    formatter_add_range(ctx->formatter, 0, 4, style); // "Test" en violet gras souligné
+
+    assert(exporter_to_ied(ctx, "test_file.ied"));
+
+    EditorContext* ctx2 = editor_create(128);
+    assert(importer_from_ied(ctx2, "test_file.ied"));
+
+    char* text = editor_get_text(ctx2);
+    assert(strcmp(text, "Test IED format with styles") == 0);
+    free(text);
+
+    TextStyle style2;
+    assert(formatter_get_style_at(ctx2->formatter, 2, &style2));
+    assert(style2.fg_color == 0xFF00FF);
+    assert(style2.bold == true);
+    assert(style2.underline == true);
+
+    editor_destroy(ctx);
+    editor_destroy(ctx2);
+    remove("test_file.ied");
 }
 
 int main(void) {
@@ -274,6 +320,10 @@ int main(void) {
 
     test_exporter();
     printf("test_exporter OK\n");
+    fflush(stdout);
+
+    test_ied_format();
+    printf("test_ied_format OK\n");
     fflush(stdout);
 
     printf("All foundation tests passed.\n");

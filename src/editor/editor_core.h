@@ -38,6 +38,7 @@ bool editor_redo(EditorContext* ctx);
 
 size_t editor_search(const EditorContext* ctx, const char* query, size_t start_pos, bool case_sensitive);
 bool editor_replace(EditorContext* ctx, const char* old_text, const char* new_text, bool all, bool case_sensitive);
+bool editor_replace_all(EditorContext* ctx, const char* old_text, const char* new_text, bool case_sensitive);
 bool editor_set_file_path(EditorContext* ctx, const char* filepath);
 
 #endif // EDITOR_CORE_H

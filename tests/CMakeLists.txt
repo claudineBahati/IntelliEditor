@@ -11,6 +11,7 @@ set(TEST_SOURCES
     ../src/editor/tokenizer.c
     ../src/editor/exporter.c
     ../src/editor/editor_core.c
+    ../src/utils/memory_pool.c
 )
 
 add_executable(IntelliEditorTests ${TEST_SOURCES})

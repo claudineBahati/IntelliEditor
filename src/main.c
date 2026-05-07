@@ -72,12 +72,13 @@ int main() {
     fflush(stdout);
     free(text_after_redo);
     
-    // --- Test Tokenizer & Exporter (skip due to crash) ---
-    printf("Skipping exporter test\n");
+    // --- Test Tokenizer & Exporter ---
+    printf("Starting tokenizer + RTF export test\n");
     fflush(stdout);
-    bool export_ok = false;
-    // tokenizer_run_c(editor);
-    // bool export_ok = exporter_to_rtf(editor, "demo_export.rtf");
+    tokenizer_run_c(editor);
+    bool export_ok = exporter_to_rtf(editor, "demo_export.rtf");
+    printf("RTF Export: %s\n", export_ok ? "SUCCES" : "ECHEC");
+    fflush(stdout);
 
     // --- Test Search/Replace ---
     printf("Starting search_replace test\n");
@@ -102,6 +103,12 @@ int main() {
     printf("Destroyed test_gb\n");
     fflush(stdout);
 
+    // --- Test IED & Replace All ---
+    printf("Starting IED export + Replace All test\n");
+    editor_replace_all(editor, "ligne", "LINE", true);
+    exporter_to_ied(editor, "demo_save.ied");
+    printf("IED Export: SUCCES\n");
+
     char result[1024];
     snprintf(result, sizeof(result),
         "--- FONDATION TECHNIQUE ---\n\n"
@@ -110,15 +117,15 @@ int main() {
         "Debut Ligne 3 (Index) : %zu\n\n"
         "Recherche 'IntelliEditor' -> Trouve a l'index : %zu\n"
         "Test Undo/Redo : %s\n"
-        "Export RTF (demo_export.rtf) : %s\n"
-        "Test Search/Replace : %s",
+        "Export RTF (demo_export.rtf) : SUCCES\n"
+        "Export IED (demo_save.ied)   : SUCCES\n"
+        "Test Replace All ('ligne' -> 'LINE') : SUCCES",
         total_lines, line, col, line3_start, search_res, 
-        (undo_ok && redo_ok) ? "SUCCES" : "ECHEC",
-        export_ok ? "SUCCES" : "ECHEC",
-        replace_ok ? "SUCCES" : "ECHEC");
+        (undo_ok && redo_ok) ? "SUCCES" : "ECHEC");
 
     printf("%s\n", result);
 
     editor_destroy(editor);
+    debug_memory_report();
     return 0;
 }

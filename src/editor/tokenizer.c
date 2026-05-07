@@ -95,6 +95,23 @@ void tokenizer_run_c(EditorContext* ctx) {
             continue;
         }
         
+        // Nombres
+        if (isdigit((unsigned char)text[i])) {
+            size_t start = i;
+            while (i < len && isdigit((unsigned char)text[i])) i++;
+            TextStyle style_number = {0x000000, 0xFFFF00, false, false, true}; // Noir sur jaune, Souligné
+            formatter_add_range(ctx->formatter, start, i - start, style_number);
+            continue;
+        }
+        
+        // Opérateurs et ponctuation
+        if (strchr("+-*/%=&|<>!;,.", text[i])) {
+            TextStyle style_op = {0x7F0055, 0, false, false, false}; // Violet
+            formatter_add_range(ctx->formatter, i, 1, style_op);
+            i++;
+            continue;
+        }
+        
         i++;
     }
     
