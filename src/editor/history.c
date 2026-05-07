@@ -1,4 +1,5 @@
 #include "history.h"
+#include "debug_memory.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -56,7 +57,12 @@ void history_record(History* h, ActionType type, size_t position, const char* te
     
     h->actions[h->count].type = type;
     h->actions[h->count].position = position;
-    h->actions[h->count].text = strdup(text);
+    
+    size_t text_len = strlen(text);
+    h->actions[h->count].text = (char*)malloc(text_len + 1);
+    if (h->actions[h->count].text) {
+        strcpy(h->actions[h->count].text, text);
+    }
     
     h->count++;
     h->current_index++;

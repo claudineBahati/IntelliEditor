@@ -3,6 +3,7 @@
 #include "encoding.h"
 #include "tokenizer.h"
 #include "exporter.h"
+#include "debug_memory.h"
 #include <stdlib.h>
 #include <stdio.h>
 

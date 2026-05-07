@@ -1,4 +1,5 @@
 #include "search.h"
+#include "debug_memory.h"
 #include <string.h>
 #include <ctype.h>
 

@@ -1,12 +1,14 @@
 #include "editor_core.h"
 #include "file_io.h"
 #include "search.h"
+#include "debug_memory.h"
 #include <stdlib.h>
 #include <string.h>
 
 EditorContext* editor_create(size_t initial_size) {
-    EditorContext* ctx = (EditorContext*)calloc(1, sizeof(EditorContext));
+    EditorContext* ctx = (EditorContext*)malloc(sizeof(EditorContext));
     if (!ctx) return NULL;
+    memset(ctx, 0, sizeof(EditorContext));
 
     ctx->buffer = gb_create(initial_size);
     if (!ctx->buffer) {

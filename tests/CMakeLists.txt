@@ -1,6 +1,7 @@
 set(TEST_SOURCES
     test_core.c
     ../src/utils/encoding.c
+    ../src/utils/debug_memory.c
     ../src/editor/gap_buffer.c
     ../src/editor/search.c
     ../src/editor/file_io.c

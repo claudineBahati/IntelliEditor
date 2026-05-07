@@ -11,6 +11,7 @@
 #include "editor_core.h"
 #include "tokenizer.h"
 #include "exporter.h"
+#include "debug_memory.h"
 
 static void test_gap_buffer(void) {
     printf("Running test_gap_buffer...\n");
@@ -213,7 +214,6 @@ static void test_exporter(void) {
     assert(exporter_to_rtf(ctx, "test_output.rtf"));
     assert(exporter_to_text(ctx, "test_output.txt"));
 
-    // Vérifier si les fichiers existent (optionnel, assert fopen suffira ici pour l'instant)
     FILE* f1 = fopen("test_output.rtf", "r");
     assert(f1);
     fclose(f1);
@@ -266,5 +266,7 @@ int main(void) {
 
     printf("All foundation tests passed.\n");
     fflush(stdout);
+
+    debug_memory_report();
     return 0;
 }

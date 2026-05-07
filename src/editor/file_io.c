@@ -1,4 +1,5 @@
 #include "file_io.h"
+#include "debug_memory.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

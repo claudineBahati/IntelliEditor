@@ -1,4 +1,5 @@
 #include "ini_parser.h"
+#include "debug_memory.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -23,9 +24,18 @@ static void add_entry(IniConfig* config, const char* section, const char* key, c
         config->entries = new_entries;
     }
     
-    config->entries[config->count].section = section ? strdup(section) : strdup("");
-    config->entries[config->count].key = strdup(key);
-    config->entries[config->count].value = strdup(value);
+    char* s_copy = (char*)malloc(section ? strlen(section) + 1 : 1);
+    if (s_copy) strcpy(s_copy, section ? section : "");
+    config->entries[config->count].section = s_copy;
+
+    char* k_copy = (char*)malloc(strlen(key) + 1);
+    if (k_copy) strcpy(k_copy, key);
+    config->entries[config->count].key = k_copy;
+
+    char* v_copy = (char*)malloc(strlen(value) + 1);
+    if (v_copy) strcpy(v_copy, value);
+    config->entries[config->count].value = v_copy;
+    
     config->count++;
 }
 
@@ -33,11 +43,12 @@ IniConfig* ini_load(const char* filename) {
     FILE* file = fopen(filename, "r");
     if (!file) return NULL;
 
-    IniConfig* config = (IniConfig*)calloc(1, sizeof(IniConfig));
+    IniConfig* config = (IniConfig*)malloc(sizeof(IniConfig));
     if (!config) {
         fclose(file);
         return NULL;
     }
+    memset(config, 0, sizeof(IniConfig));
 
     char line[256];
     char current_section[128] = "";

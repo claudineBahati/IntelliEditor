@@ -21,6 +21,7 @@ include_directories(src/editor)
 set(SOURCES
     src/main.c
     src/utils/encoding.c
+    src/utils/debug_memory.c
     src/editor/editor_core.c
     src/editor/history.c
     src/editor/formatter.c
