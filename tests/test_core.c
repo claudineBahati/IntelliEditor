@@ -50,6 +50,18 @@ static void test_search(void) {
     size_t idx3 = search_find(gb, "inexistant", 0, false);
     assert(idx3 == (size_t)-1);
 
+    // Test search_replace
+    GapBuffer* gb2 = gb_create(32);
+    gb_insert_string(gb2, "Hello World!");
+    size_t replace_pos = search_replace(gb2, "World", "IntelliEditor", 0, true);
+    assert(replace_pos != (size_t)-1);
+    
+    char* result = gb_get_text(gb2);
+    assert(strcmp(result, "Hello IntelliEditor!") == 0);
+    free(result);
+    
+    gb_destroy(gb2);
+
     gb_destroy(gb);
 }
 

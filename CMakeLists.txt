@@ -8,8 +8,8 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 # Options de compilation pour Windows (MinGW)
 if(WIN32)
     add_definitions(-DUNICODE -D_UNICODE)
-    # Pour éviter d'ouvrir une console en arrière-plan lors du lancement de l'application GUI
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
+    # Pour déboguer, gardez la console activée
+    # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
 endif()
 
 # Dossiers d'inclusion (où chercher les fichiers .h)

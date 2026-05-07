@@ -38,3 +38,36 @@ size_t search_find(const GapBuffer* gb, const char* query, size_t start_pos, boo
     
     return (size_t)-1;
 }
+
+size_t search_replace(GapBuffer* gb, const char* query, const char* replacement, size_t start_pos, bool case_sensitive) {
+    if (!gb || !query || !replacement) return (size_t)-1;
+    
+    size_t query_len = strlen(query);
+    if (query_len == 0) return (size_t)-1;
+    
+    // Trouver la position de la chaîne à remplacer
+    size_t pos = search_find(gb, query, start_pos, case_sensitive);
+    if (pos == (size_t)-1) return (size_t)-1;
+    
+    // Sauvegarder la position actuelle du curseur
+    size_t original_cursor = gb->gap_start;
+    
+    // Déplacer le curseur au début de la chaîne trouvée
+    gb_move_cursor(gb, (int)(pos - gb->gap_start));
+    
+    // Supprimer la chaîne query caractère par caractère
+    for (size_t i = 0; i < query_len; i++) {
+        gb_delete_delete(gb);
+    }
+    
+    // Insérer la chaîne de remplacement
+    gb_insert_string(gb, replacement);
+    
+    // Restaurer la position du curseur à la fin du remplacement
+    size_t new_pos = gb->gap_start;
+    
+    // Remettre le curseur à sa position originale si nécessaire
+    // (optionnel, selon la logique souhaitée)
+    
+    return new_pos;
+}
