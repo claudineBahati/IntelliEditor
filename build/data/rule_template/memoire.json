@@ -53,6 +53,17 @@
         "description": "La problématique de recherche doit être explicitement posée",
         "check_type": "llm_semantic",
         "parameter": { "prompt": "Le texte de la section Introduction pose-t-il explicitement une problématique ou une question de recherche ?", "target_section": "Introduction" }
+      },
+      {
+        "id": "R010",
+        "category": "longueur",
+        "severity": "warning",
+        "description": "La conclusion ne doit pas dépasser 500 mots",
+        "check_type": "word_count_max",
+        "parameter": {
+          "section": "Conclusion",
+          "max_words": 500
+        }
       }
     ]
   }

@@ -5,6 +5,7 @@
 #include "checkers/section_checker.h"
 #include "checkers/contains_checker.h"
 #include "rules/checkers/regex_checker.h"
+#include "rules/checkers/count_checker.h"
 
 RuleResult* evaluate_rules(RuleSet* ruleset, const char* text, int* result_count) {
     *result_count = ruleset->count;
@@ -32,6 +33,17 @@ RuleResult* evaluate_rules(RuleSet* ruleset, const char* text, int* result_count
                 text,
                 rule.parameter,
                 rule.flags
+            );
+        }
+        else if (strcmp(rule.check_type, "count_min") == 0) {
+            success = check_min_word_count(text, rule.section, rule.min_words);
+        }
+        else if (strcmp(rule.check_type, "count_max") == 0) {
+
+            success = check_max_word_count(
+                text,
+                rule.section,
+                rule.max_words
             );
         }
         else {

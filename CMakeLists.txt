@@ -12,7 +12,7 @@ set(RULES_SRC
     src/rules/rule_engine.c
     src/rules/checkers/section_checker.c
     src/rules/checkers/contains_checker.c
-    src/rules/checkers/word_count_checker.c
+    src/rules/checkers/count_checker.c
     src/rules/checkers/regex_checker.c
 )
 
@@ -29,7 +29,7 @@ add_executable(test_exist_section
     src/rules/rule_engine.c
     src/rules/checkers/section_checker.c
     src/rules/checkers/contains_checker.c
-    src/rules/checkers/word_count_checker.c
+    src/rules/checkers/count_checker.c
     src/rules/checkers/regex_checker.c
 )
 target_link_libraries(test_exist_section rules_lib cmocka cjson pcre2-8)
@@ -40,6 +40,13 @@ add_executable(test_regex_checker
 )
 target_link_libraries(test_regex_checker rules_lib cmocka pcre2-8)
 
+add_executable(test_count_checker
+    tests/test_count_checker.c
+    src/rules/checkers/count_checker.c
+)
+target_link_libraries(test_count_checker
+    cmocka
+)
 # 🔹 Copier les DLL runtime (Windows)
 set(MSYS2_BIN_DIR "C:/msys64/mingw64/bin")
 
@@ -69,7 +76,7 @@ add_custom_command(TARGET test_rules POST_BUILD
         ${CMAKE_BINARY_DIR}
 )
 
-# Copier la DLL PCRE2 (⚠️ pas le .dll.a)
+# Copier la DLL PCRE2 
 add_custom_command(TARGET test_exist_section POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${MSYS2_BIN_DIR}/libpcre2-8-0.dll
@@ -93,3 +100,4 @@ enable_testing()
 add_test(NAME RulesTest COMMAND test_rules)
 add_test(NAME SectionTest COMMAND test_exist_section)
 add_test(NAME RegexCheckerTest COMMAND test_regex_checker)
+add_test(NAME CountCheckerTest COMMAND test_count_checker)

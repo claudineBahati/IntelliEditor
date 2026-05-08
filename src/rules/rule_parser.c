@@ -24,7 +24,7 @@ static char* read_file(const char* filename) {
     return buffer;
 }
 
-//  Parser une règle
+// 🔹 Parser une règle
 static Rule parse_rule(cJSON* json_rule) {
     Rule rule = {0};
 
@@ -36,20 +36,54 @@ static Rule parse_rule(cJSON* json_rule) {
     cJSON* parameter = cJSON_GetObjectItem(json_rule, "parameter");
     cJSON* flags = cJSON_GetObjectItem(json_rule, "flags");
 
-    if (id) rule.id = strdup(id->valuestring);
-    if (category) rule.category = strdup(category->valuestring);
-    if (severity) rule.severity = strdup(severity->valuestring);
-    if (description) rule.description = strdup(description->valuestring);
-    if (check_type) rule.check_type = strdup(check_type->valuestring);
-    if (parameter) rule.parameter = strdup(parameter->valuestring);
-    if (flags) rule.flags = strdup(flags->valuestring);
-    
-    //  paramètre simple (string)
+    if (id && cJSON_IsString(id))
+        rule.id = strdup(id->valuestring);
+
+    if (category && cJSON_IsString(category))
+        rule.category = strdup(category->valuestring);
+
+    if (severity && cJSON_IsString(severity))
+        rule.severity = strdup(severity->valuestring);
+
+    if (description && cJSON_IsString(description))
+        rule.description = strdup(description->valuestring);
+
+    if (check_type && cJSON_IsString(check_type))
+        rule.check_type = strdup(check_type->valuestring);
+
+    // 🔹 parameter simple (string)
     if (parameter && cJSON_IsString(parameter)) {
         rule.parameter = strdup(parameter->valuestring);
     }
 
-    //  flags optionnel
+    // 🔹 parameter objet pour word_count_min
+    else if (
+        parameter &&
+        cJSON_IsObject(parameter) &&
+        rule.check_type &&
+        (
+            strcmp(rule.check_type, "word_count_min") == 0 ||
+            strcmp(rule.check_type, "word_count_max") == 0
+        )
+    ){
+
+        cJSON* section = cJSON_GetObjectItem(parameter, "section");
+        cJSON* min_words = cJSON_GetObjectItem(parameter, "min_words");
+        cJSON* max_words = cJSON_GetObjectItem(parameter, "max_words");
+
+        if (section && cJSON_IsString(section)) {
+            rule.section = strdup(section->valuestring);
+        }
+
+        if (min_words && cJSON_IsNumber(min_words)) {
+            rule.min_words = min_words->valueint;
+        }
+        if (max_words && cJSON_IsNumber(max_words)) {
+            rule.max_words = max_words->valueint;
+        }
+    }
+
+    // 🔹 flags optionnel
     if (flags && cJSON_IsString(flags)) {
         rule.flags = strdup(flags->valuestring);
     }
@@ -105,6 +139,7 @@ void free_ruleset(RuleSet* ruleset) {
         free(r.description);
         free(r.check_type);
         free(r.parameter);
+        free(r.section);
         free(r.flags);
     }
 
