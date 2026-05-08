@@ -6,7 +6,7 @@
 static Hunhandle* pHunspell = NULL;
 
 // 1. Initialisation
-bool nlp_init(const char* aff_path, const char* dic_path) {
+bool hunspell_wrap_init(const char* aff_path, const char* dic_path) {
     // On crée l'instance du correcteur avec les fichiers .aff et .dic
     pHunspell = Hunspell_create(aff_path, dic_path);
     
@@ -20,7 +20,7 @@ bool nlp_init(const char* aff_path, const char* dic_path) {
 }
 
 // 2. Vérification d'un mot
-bool nlp_check_word(const char* word) {
+bool hunspell_wrap_check_word(const char* word) {
     if (pHunspell == NULL) return false;
     
     // Hunspell renvoie 0 si le mot est FAUX, et autre chose si c'est JUSTE
@@ -29,7 +29,7 @@ bool nlp_check_word(const char* word) {
 }
 
 // 3. Nettoyage
-void nlp_cleanup() {
+void hunspell_wrap_cleanup() {
     if (pHunspell != NULL) {
         Hunspell_destroy(pHunspell);
         pHunspell = NULL;

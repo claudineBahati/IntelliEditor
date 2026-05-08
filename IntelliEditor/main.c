@@ -1,67 +1,72 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
-#include "llm/llm_thread.h"
-#include "nlp/nlp_engine.h" // On inclut uniquement le moteur maintenant
-#include "llm/json_parser/json_parser.h"
+#include "nlp/nlp_engine.h"
 
 int main() {
-    // 1. Initialisation du LLM
-    llm_config_t config = {0}; 
-    if (!llm_thread_init(config)) {
-        printf("Erreur lors de l'initialisation du thread LLM\n");
+    // 1. INITIALISATION (On le fait AU DÉBUT, une seule fois)
+    if (!nlp_init("dictionaries/en.aff", "dictionaries/en.dic")) {
+        printf("Erreur de chargement des dictionnaires !\n");
         return 1;
     }
-    char *fake_json = "{\"choices\": [{\"message\": {\"content\": \"Ceci est une correction reussie !\"}}]}";
-    char result[256];
 
-    if (parse_llm_response(fake_json, result, sizeof(result))) {
-    printf("\n[TEST JSON] Succes ! Contenu extrait : %s\n", result);
-    } else {
-    printf("\n[TEST JSON] Echec du parsing.\n");
-   }
+    // Déclaration de la variable qui va stocker la saisie
+    char input[512]; 
 
-    // 2. Initialisation du Correcteur (NLP)
-    // On garde l'anglais pour l'instant comme ton test a fonctionné
-    if (!nlp_init("dictionaries/en.aff", "dictionaries/en.dic")) {
-        printf("Attention : Dictionnaires non trouves.\n");
-    } else {
-        printf("[NLP] Moteur de correction pret.\n");
-    }
+    printf("=== INTELLIEDITOR - MODE INTERACTIF ===\n");
+    printf("Tapez une phrase ou 'exit' pour quitter.\n");
 
-    printf("=== IntelliEditor v1.0 ===\n");
-    printf("Tapez votre texte (le thread LLM et le moteur NLP travaillent ensemble).\n");
-
-    char buffer[1024];
+    // 2. LA BOUCLE INTERACTIVE
     while (1) {
-        printf("\nEntrez un texte (ou 'exit' pour quitter) : \n> ");
-        if (fgets(buffer, sizeof(buffer), stdin) == NULL) break;
+        printf("\n> ");
         
-        buffer[strcspn(buffer, "\n")] = 0;
-        if (strcmp(buffer, "exit") == 0) break;
+        // Lire l'entrée clavier
+        if (fgets(input, sizeof(input), stdin) == NULL) break;
 
-        // --- NOUVELLE PARTIE : UTILISATION DU MOTEUR ---
-        // Le nlp_engine s'occupe de tout (Tokenize + Check)
-        CorrectionReport report = nlp_process_text(buffer);
-        
-        printf("[NLP] Analyse terminee : %d faute(s) trouvee(s).\n", report.error_count);
-        for (int i = 0; i < report.error_count; i++) {
-            printf("  -> Faute : %s (Mot n°%d)\n", report.errors[i].word, report.errors[i].word_index + 1);
+        // Enlever le retour à la ligne (\n)
+        input[strcspn(input, "\n")] = 0;
+
+        // Quitter si on tape "exit"
+        if (strcmp(input, "exit") == 0) break;
+        if (strlen(input) == 0) continue;
+
+        printf("--- Analyse en cours ---\n");
+
+        // 3. ANALYSE (Orthographe et Sémantique)
+        CorrectionReport report = nlp_process_text(input);
+
+        // 4. AFFICHAGE ORTHOGRAPHE
+        printf("\n[Orthographe] : %d faute(s) trouvee(s).\n", report.sp_error_count);
+        for (int i = 0; i < report.sp_error_count; i++) {
+            printf("  -> Mot inconnu : %s\n", report.sp_errors[i].word);
         }
-        
-        // On libère la mémoire du rapport (très important !)
-        nlp_free_report(&report);
 
-        // --- PARTIE LLM ---
-        llm_thread_query(buffer);
-        printf("[Main] Requete envoyee au thread LLM...\n");
+        // 5. AFFICHAGE GRAMMAIRE / SÉMANTIQUE
+        if (report.gr_error_count > 0) {
+            printf("\n[Grammaire/IA] : %d alerte(s).\n", report.gr_error_count);
+            for (int i = 0; i < report.gr_error_count; i++) {
+                printf("  -> %s : %s\n", report.gr_errors[i].error_type, report.gr_errors[i].suggested_correction);
+            }
+        }
+
+        // 6. REFORMULATION
+        printf("\n[Reformulation] : Suggestions de style\n");
+        ParaphraseReport para_report = nlp_generate_paraphrase(input);
+
+        if (para_report.suggestion_count > 0) {
+            for (int i = 0; i < para_report.suggestion_count; i++) {
+                printf("  -> Option %d : %s\n", i + 1, para_report.suggestions[i]);
+            }
+        } else {
+            printf("  -> Aucune suggestion.\n");
+        }
+
+        // 7. NETTOYAGE pour la prochaine boucle
+        nlp_free_report(&report);
     }
 
-    // 3. Fermeture propre
-    llm_thread_stop();
-    nlp_cleanup(); 
-    printf("Programme arrete.\n");
-
+    // 8. FERMETURE FINALE
+    nlp_cleanup();
+    printf("\n=== FIN DU PROGRAMME ===\n");
     return 0;
 }

@@ -3,13 +3,13 @@
 
 #include <stdbool.h>
 
-// Initialise le correcteur
-bool nlp_init(const char* aff_path, const char* dic_path);
+// Initialise le correcteur Hunspell
+bool hunspell_wrap_init(const char* aff_path, const char* dic_path);
 
 // Vérifie un mot
-bool nlp_check_word(const char* word);
+bool hunspell_wrap_check_word(const char* word);
 
 // Libère la mémoire
-void nlp_cleanup();
+void hunspell_wrap_cleanup();
 
 #endif
