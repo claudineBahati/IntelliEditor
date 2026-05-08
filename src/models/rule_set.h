@@ -1,5 +1,6 @@
 #ifndef RULE_SET_H
 #define RULE_SET_H
+#include <cjson/cJSON.h>
 
 typedef struct {
     char* id;
@@ -9,7 +10,7 @@ typedef struct {
 
     char* check_type;
 
-    char* parameter;      // pour les règles simples
+    cJSON* parameter; 
     char* section;        // pour word_count_min
     int min_words;
     int max_words;        // pour word_count_min

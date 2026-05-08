@@ -52,10 +52,9 @@ static Rule parse_rule(cJSON* json_rule) {
         rule.check_type = strdup(check_type->valuestring);
 
     // 🔹 parameter simple (string)
-    if (parameter && cJSON_IsString(parameter)) {
-        rule.parameter = strdup(parameter->valuestring);
+    if (parameter) {
+        rule.parameter = cJSON_Duplicate(parameter, 1);
     }
-
     // 🔹 parameter objet pour word_count_min
     else if (
         parameter &&
@@ -138,7 +137,7 @@ void free_ruleset(RuleSet* ruleset) {
         free(r.severity);
         free(r.description);
         free(r.check_type);
-        free(r.parameter);
+        cJSON_Delete(r.parameter);
         free(r.section);
         free(r.flags);
     }

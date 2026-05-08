@@ -21,17 +21,23 @@ RuleResult* evaluate_rules(RuleSet* ruleset, const char* text, int* result_count
 
         
         if (strcmp(rule.check_type, "section_exists") == 0) {
-            success = check_section_exists(text, rule.parameter);
+            success = check_section_exists(
+                text,
+                rule.parameter->valuestring
+            );
 
         } else if (strcmp(rule.check_type, "contains") == 0) {
-            success = check_contains(text, rule.parameter);
+            success = check_contains(
+                text,
+                rule.parameter->valuestring
+            );
 
         } 
         else if (strcmp(rule.check_type, "regex_forbidden") == 0) {
 
             success = check_regex_forbidden(
                 text,
-                rule.parameter,
+                rule.parameter->valuestring,
                 rule.flags
             );
         }
@@ -45,6 +51,14 @@ RuleResult* evaluate_rules(RuleSet* ruleset, const char* text, int* result_count
                 rule.section,
                 rule.max_words
             );
+        }
+        else if (strcmp(rule.check_type, "section_order") == 0) {
+
+            success = check_section_exists(
+                text,
+                rule.parameter->valuestring
+            );
+        
         }
         else {
             success = 0;

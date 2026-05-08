@@ -1,5 +1,5 @@
-RulesTest 6 0.0691307
-SectionTest 5 0.392639
-RegexCheckerTest 4 0.102146
-CountCheckerTest 1 0.47341
+RulesTest 7 0.130428
+SectionTest 6 0.130324
+RegexCheckerTest 5 0.120523
+CountCheckerTest 2 0.501262
 ---

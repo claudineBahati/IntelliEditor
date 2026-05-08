@@ -47,6 +47,17 @@ add_executable(test_count_checker
 target_link_libraries(test_count_checker
     cmocka
 )
+
+add_executable(test_section_order_checker
+    tests/test_section_order_checker.c
+    src/rules/checkers/section_checker.c
+)
+
+target_link_libraries(test_section_order_checker
+    cmocka
+    cjson
+)
+
 # 🔹 Copier les DLL runtime (Windows)
 set(MSYS2_BIN_DIR "C:/msys64/mingw64/bin")
 
