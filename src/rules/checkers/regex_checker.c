@@ -61,3 +61,49 @@ int check_regex_forbidden(
 
     return 1;
 }
+int check_regex_required(
+    const char* text,
+    const char* pattern,
+    const char* flags
+) {
+
+    int errornumber;
+    PCRE2_SIZE erroroffset;
+
+    uint32_t options = 0;
+
+    if (flags && strstr(flags, "i")) {
+        options |= PCRE2_CASELESS;
+    }
+
+    pcre2_code* re = pcre2_compile(
+        (PCRE2_SPTR)pattern,
+        PCRE2_ZERO_TERMINATED,
+        options,
+        &errornumber,
+        &erroroffset,
+        NULL
+    );
+
+    if (!re) {
+        return 0;
+    }
+
+    pcre2_match_data* match_data =
+        pcre2_match_data_create_from_pattern(re, NULL);
+
+    int rc = pcre2_match(
+        re,
+        (PCRE2_SPTR)text,
+        strlen(text),
+        0,
+        0,
+        match_data,
+        NULL
+    );
+
+    pcre2_match_data_free(match_data);
+    pcre2_code_free(re);
+
+    return rc >= 0;
+}

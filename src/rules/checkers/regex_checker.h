@@ -6,5 +6,10 @@ int check_regex_forbidden(
     const char* pattern,
     const char* flags
 );
+int check_regex_required(
+    const char* text,
+    const char* pattern,
+    const char* flags
+);
 
 #endif

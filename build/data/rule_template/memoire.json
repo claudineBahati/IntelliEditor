@@ -70,8 +70,26 @@
         "Bibliographie"
         ]
         },
+        {
+          "id": "R011",
+          "category": "structure",
+          "severity": "critical",
+          "description": "Le document doit contenir une conclusion",
+          "check_type": "regex_required",
+          "parameter": "Conclusion",
+          "flags": "i"
+        },
+        {
+          "id": "R012",
+          "category": "structure",
+          "severity": "warning",
+          "description": "Le document doit contenir un chapitre numéroté",
+          "check_type": "regex_required",
+          "parameter": "Chapitre[ ]+[0-9]+",
+          "flags": "i"
+        },
       {
-        "id": "R011",
+        "id": "R013",
         "category": "longueur",
         "severity": "warning",
         "description": "La conclusion ne doit pas dépasser 500 mots",

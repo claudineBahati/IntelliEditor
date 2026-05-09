@@ -41,6 +41,15 @@ RuleResult* evaluate_rules(RuleSet* ruleset, const char* text, int* result_count
                 rule.flags
             );
         }
+        else if (strcmp(rule.check_type, "regex_required") == 0) {
+
+            success = check_regex_required(
+                text,
+                rule.parameter->valuestring,
+                rule.flags
+            );
+        
+        }
         else if (strcmp(rule.check_type, "count_min") == 0) {
             success = check_min_word_count(text, rule.section, rule.min_words);
         }
