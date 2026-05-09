@@ -138,40 +138,63 @@ void editor_move_cursor(EditorContext* ctx, int offset) {
     gb_move_cursor(ctx->buffer, offset);
 }
 
+static void apply_action(EditorContext* ctx, const EditorAction* action, bool undo) {
+    if (!action || !action->text) return;
+
+    size_t current_pos = ctx->buffer->gap_start;
+    gb_move_cursor(ctx->buffer, (int)action->position - (int)current_pos);
+
+    if (undo) {
+        if (action->type == ACTION_INSERT) {
+            for (size_t i = 0; i < strlen(action->text); i++) {
+                gb_delete_delete(ctx->buffer);
+            }
+        } else if (action->type == ACTION_DELETE) {
+            gb_insert_string(ctx->buffer, action->text);
+        }
+    } else {
+        if (action->type == ACTION_INSERT) {
+            gb_insert_string(ctx->buffer, action->text);
+        } else if (action->type == ACTION_DELETE) {
+            for (size_t i = 0; i < strlen(action->text); i++) {
+                gb_delete_delete(ctx->buffer);
+            }
+        }
+    }
+}
+
 bool editor_undo(EditorContext* ctx) {
+    if (!ctx || !ctx->history) return false;
+    
     const EditorAction* action = history_undo(ctx->history);
     if (!action) return false;
 
-    if (action->type == ACTION_INSERT) {
-        // Pour annuler une insertion, on supprime
-        size_t current_pos = ctx->buffer->gap_start;
-        gb_move_cursor(ctx->buffer, (int)action->position - (int)current_pos);
-        for (size_t i = 0; i < strlen(action->text); i++) {
-            gb_delete_delete(ctx->buffer);
+    if (action->type == ACTION_END_GROUP) {
+        while (true) {
+            action = history_undo(ctx->history);
+            if (!action || action->type == ACTION_BEGIN_GROUP) break;
+            apply_action(ctx, action, true);
         }
     } else {
-        // Pour annuler une suppression, on ré-insère
-        size_t current_pos = ctx->buffer->gap_start;
-        gb_move_cursor(ctx->buffer, (int)action->position - (int)current_pos);
-        gb_insert_string(ctx->buffer, action->text);
+        apply_action(ctx, action, true);
     }
     return true;
 }
 
 bool editor_redo(EditorContext* ctx) {
+    if (!ctx || !ctx->history) return false;
+    
     const EditorAction* action = history_redo(ctx->history);
     if (!action) return false;
 
-    if (action->type == ACTION_INSERT) {
-        size_t current_pos = ctx->buffer->gap_start;
-        gb_move_cursor(ctx->buffer, (int)action->position - (int)current_pos);
-        gb_insert_string(ctx->buffer, action->text);
-    } else {
-        size_t current_pos = ctx->buffer->gap_start;
-        gb_move_cursor(ctx->buffer, (int)action->position - (int)current_pos);
-        for (size_t i = 0; i < strlen(action->text); i++) {
-            gb_delete_delete(ctx->buffer);
+    if (action->type == ACTION_BEGIN_GROUP) {
+        while (true) {
+            action = history_redo(ctx->history);
+            if (!action || action->type == ACTION_END_GROUP) break;
+            apply_action(ctx, action, false);
         }
+    } else {
+        apply_action(ctx, action, false);
     }
     return true;
 }
@@ -183,6 +206,10 @@ size_t editor_search(const EditorContext* ctx, const char* query, size_t start_p
 
 bool editor_replace(EditorContext* ctx, const char* old_text, const char* new_text, bool all, bool case_sensitive) {
     if (!ctx || !old_text || !new_text) return false;
+
+    if (all) {
+        history_record(ctx->history, ACTION_BEGIN_GROUP, 0, "");
+    }
 
     size_t old_len = strlen(old_text);
     size_t start_pos = 0;
@@ -217,8 +244,16 @@ bool editor_replace(EditorContext* ctx, const char* old_text, const char* new_te
         if (start_pos >= gb_get_length(ctx->buffer)) break;
     }
 
+    if (all) {
+        history_record(ctx->history, ACTION_END_GROUP, 0, "");
+    }
+
     if (found_any) ctx->modified = true;
     return found_any;
+}
+
+bool editor_replace_all(EditorContext* ctx, const char* old_text, const char* new_text, bool case_sensitive) {
+    return editor_replace(ctx, old_text, new_text, true, case_sensitive);
 }
 
 bool editor_set_file_path(EditorContext* ctx, const char* filepath) {

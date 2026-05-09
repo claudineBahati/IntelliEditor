@@ -6,7 +6,9 @@
 
 typedef enum {
     ACTION_INSERT,
-    ACTION_DELETE
+    ACTION_DELETE,
+    ACTION_BEGIN_GROUP,
+    ACTION_END_GROUP
 } ActionType;
 
 typedef struct {

@@ -71,3 +71,29 @@ size_t search_replace(GapBuffer* gb, const char* query, const char* replacement,
     
     return new_pos;
 }
+
+size_t search_replace_all(GapBuffer* gb, const char* query, const char* replacement, bool case_sensitive) {
+    if (!gb || !query || !replacement) return 0;
+    
+    size_t count = 0;
+    size_t start_pos = 0;
+    size_t query_len = strlen(query);
+    size_t replacement_len = strlen(replacement);
+    
+    while (true) {
+        size_t pos = search_find(gb, query, start_pos, case_sensitive);
+        if (pos == (size_t)-1) break;
+        
+        // Effectuer le remplacement
+        search_replace(gb, query, replacement, pos, case_sensitive);
+        count++;
+        
+        // Mettre à jour start_pos pour continuer la recherche après le remplacement
+        start_pos = pos + replacement_len;
+        
+        // Sécurité
+        if (start_pos >= gb_get_length(gb)) break;
+    }
+    
+    return count;
+}
