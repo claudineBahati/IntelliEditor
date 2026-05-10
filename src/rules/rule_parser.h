@@ -1,8 +1,12 @@
+
 #ifndef RULE_PARSER_H
 #define RULE_PARSER_H
-#include "models/rule_set.h"
 
-RuleSet* load_rules(const char* file_path);
-void free_ruleset(RuleSet* ruleset);
+#include "rule_engine.h"
+
+int load_rules_from_file(
+    const char* filename,
+    RuleSet* ruleset
+);
 
 #endif

@@ -1,111 +1,107 @@
+
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <cjson/cJSON.h>
+#include <stdlib.h>
+
 #include "rule_parser.h"
 
-// 🔹 Lire fichier entier
-static char* read_file(const char* filename) {
-    FILE* file = fopen(filename, "rb");
-    if (!file) {
-        printf("Erreur ouverture fichier\n");
-        return NULL;
+static void extract_value(
+    const char* line,
+    char* output,
+    size_t size
+) {
+
+    const char* colon = strchr(line, ':');
+
+    if (!colon)
+        return;
+
+    colon++;
+
+    while (*colon == ' ' || *colon == '"')
+        colon++;
+
+    size_t i = 0;
+
+    while (*colon &&
+           *colon != '"' &&
+           *colon != ',' &&
+           *colon != '\n' &&
+           i < size - 1) {
+
+        output[i++] = *colon++;
     }
 
-    fseek(file, 0, SEEK_END);
-    long size = ftell(file);
-    rewind(file);
+    output[i] = '\0';
+}
 
-    char* buffer = (char*)malloc(size + 1);
-    fread(buffer, 1, size, file);
-    buffer[size] = '\0';
+int load_rules_from_file(
+    const char* filename,
+    RuleSet* ruleset
+) {
+
+    FILE* file = fopen(filename, "r");
+
+    if (!file)
+        return 0;
+
+    ruleset->count = 0;
+
+    char line[2048];
+
+    Rule current = {0};
+    int inside_rule = 0;
+
+    while (fgets(line, sizeof(line), file)) {
+
+        if (strstr(line, "{") && strstr(line, "\"id\"") == NULL) {
+            continue;
+        }
+
+        if (strstr(line, "\"id\"")) {
+            memset(&current, 0, sizeof(Rule));
+            inside_rule = 1;
+            extract_value(line, current.id, sizeof(current.id));
+        }
+
+        if (!inside_rule)
+            continue;
+
+        if (strstr(line, "\"category\"")) {
+            extract_value(line, current.category, sizeof(current.category));
+        }
+
+        if (strstr(line, "\"severity\"")) {
+            extract_value(line, current.severity, sizeof(current.severity));
+        }
+
+        if (strstr(line, "\"description\"")) {
+            extract_value(line, current.description, sizeof(current.description));
+        }
+
+        if (strstr(line, "\"check_type\"")) {
+            extract_value(line, current.check_type, sizeof(current.check_type));
+        }
+
+        if (strstr(line, "\"parameter\"")) {
+            extract_value(line, current.parameter, sizeof(current.parameter));
+        }
+
+        if (strstr(line, "\"flags\"")) {
+            extract_value(line, current.flags, sizeof(current.flags));
+        }
+
+        if (strstr(line, "\"target_section\"")) {
+            extract_value(line, current.target_section, sizeof(current.target_section));
+        }
+
+        if (inside_rule && strstr(line, "}")) {
+            ruleset->rules[ruleset->count++] = current;
+            inside_rule = 0;
+        }
+    }
 
     fclose(file);
-    return buffer;
-}
 
-// 🔹 Parser une règle
-static Rule parse_rule(cJSON* json_rule) {
-    Rule rule = {0};
-
-    cJSON* id = cJSON_GetObjectItem(json_rule, "id");
-    cJSON* category = cJSON_GetObjectItem(json_rule, "category");
-    cJSON* severity = cJSON_GetObjectItem(json_rule, "severity");
-    cJSON* description = cJSON_GetObjectItem(json_rule, "description");
-    cJSON* check_type = cJSON_GetObjectItem(json_rule, "check_type");
-    cJSON* parameter = cJSON_GetObjectItem(json_rule, "parameter");
-    cJSON* flags = cJSON_GetObjectItem(json_rule, "flags");
-
-    if (id) rule.id = strdup(id->valuestring);
-    if (category) rule.category = strdup(category->valuestring);
-    if (severity) rule.severity = strdup(severity->valuestring);
-    if (description) rule.description = strdup(description->valuestring);
-    if (check_type) rule.check_type = strdup(check_type->valuestring);
-
-    // 🔹 paramètre simple (string)
-    if (parameter && cJSON_IsString(parameter)) {
-        rule.parameter_str = strdup(parameter->valuestring);
-    }
-
-    // 🔹 flags optionnel
-    if (flags && cJSON_IsString(flags)) {
-        rule.flags = strdup(flags->valuestring);
-    }
-
-    return rule;
-}
-
-// 🔹 Fonction principale
-RuleSet* load_rules(const char* file_path) {
-    char* json_data = read_file(file_path);
-    if (!json_data) return NULL;
-
-    cJSON* root = cJSON_Parse(json_data);
-    if (!root) {
-        printf("Erreur parsing JSON\n");
-        free(json_data);
-        return NULL;
-    }
-
-    cJSON* rules_json = cJSON_GetObjectItem(root, "rules");
-    if (!cJSON_IsArray(rules_json)) {
-        printf("Format rules invalide\n");
-        cJSON_Delete(root);
-        free(json_data);
-        return NULL;
-    }
-
-    int count = cJSON_GetArraySize(rules_json);
-
-    RuleSet* ruleset = (RuleSet*)malloc(sizeof(RuleSet));
-    ruleset->rules = (Rule*)malloc(sizeof(Rule) * count);
-    ruleset->count = count;
-
-    for (int i = 0; i < count; i++) {
-        cJSON* json_rule = cJSON_GetArrayItem(rules_json, i);
-        ruleset->rules[i] = parse_rule(json_rule);
-    }
-
-    cJSON_Delete(root);
-    free(json_data);
-
-    return ruleset;
-}
-
-// 🔹 Libération mémoire
-void free_ruleset(RuleSet* ruleset) {
-    for (int i = 0; i < ruleset->count; i++) {
-        Rule r = ruleset->rules[i];
-
-        free(r.id);
-        free(r.category);
-        free(r.severity);
-        free(r.description);
-        free(r.check_type);
-        free(r.parameter_str);
-        free(r.flags);
-    }
-
-    free(ruleset->rules);
-    free(ruleset);
+    return 1;
 }

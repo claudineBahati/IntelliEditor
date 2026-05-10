@@ -7,7 +7,7 @@
 static void test_load_rules(void **state) {
     printf("START TEST\n");
 
-    RuleSet* ruleset = load_rules("data/rule_template/memoire.json");
+    RuleSet* ruleset = load_rules("data/rule_templates/memoiry_license.json");
 
     printf("AFTER LOAD\n");
 
