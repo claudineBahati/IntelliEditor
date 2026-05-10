@@ -29,25 +29,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="13232f89-0ace-4db4-9252-03f201e5e81f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/data/rule_templates/memory_license.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/rule_template/memoire.json" beforeDir="false" />
+    <list default="true" id="13232f89-0ace-4db4-9252-03f201e5e81f" name="Changes" comment="implémentation du moteur de règles et du système de rapport">
       <change beforePath="$PROJECT_DIR$/src/editor/config.c" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/editor/config.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/editor/editor_core.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/editor/editor_core.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/editor/exporter.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/editor/file_io.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/editor/formatter.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/editor/gap_buffer.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/editor/history.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/editor/search.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/editor/tokenizer.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/rules/rule_parser.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/rules/rule_parser.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/rules/rule_parser.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/rules/rule_parser.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_rules.c" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_rules.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -151,8 +135,17 @@
       <workItem from="1778403722306" duration="424000" />
       <workItem from="1778404308194" duration="2062000" />
       <workItem from="1778406541439" duration="28000" />
-      <workItem from="1778407109998" duration="1665000" />
+      <workItem from="1778407109998" duration="4027000" />
     </task>
+    <task id="LOCAL-00001" summary="implémentation du moteur de règles et du système de rapport">
+      <option name="closed" value="true" />
+      <created>1778410462369</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1778410462369</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -163,5 +156,9 @@
     <isAutomaticFoundErrors value="true" />
     <isAutomaticReloadCMake value="true" />
     <isAutomaticBootstrapAfterUpdate value="false" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="implémentation du moteur de règles et du système de rapport" />
+    <option name="LAST_COMMIT_MESSAGE" value="implémentation du moteur de règles et du système de rapport" />
   </component>
 </project>
