@@ -215,6 +215,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 int col = (int)SendMessage(hEditor, SCI_GETCOLUMN, pos, 0);
                 int words = Scintilla_GetWordCount(hEditor);
                 Statusbar_Update(hStatusbar, words, line + 1, col + 1);
+                Scintilla_UpdateBraceMatch(hEditor);
             }
             
             // Custom Draw pour le look Premium (Toolbar et Statusbar)

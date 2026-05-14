@@ -52,6 +52,15 @@ void Scintilla_Configure(HWND hScintilla) {
     // Activer le retour à la ligne automatique (word wrap)
     SendMessage(hScintilla, SCI_SETWRAPMODE, SC_WRAP_WORD, 0);
 
+    // Mettre en évidence la ligne courante
+    SendMessage(hScintilla, SCI_SETCARETLINEVISIBLE, TRUE, 0);
+    SendMessage(hScintilla, SCI_SETCARETLINEBACK, RGB(240, 240, 240), 0);
+    SendMessage(hScintilla, SCI_SETCARETLINEBACKALPHA, 50, 0);
+
+    // Activer la correspondance des parenthèses/accolades
+    SendMessage(hScintilla, SCI_STYLESETFORE, STYLE_BRACELIGHT, RGB(255, 0, 0));
+    SendMessage(hScintilla, SCI_STYLESETBOLD, STYLE_BRACELIGHT, TRUE);
+
     // Configuration de l'indicateur d'erreur (Squiggle rouge)
     SendMessage(hScintilla, SCI_INDICSETSTYLE, 0, INDIC_SQUIGGLE);
     SendMessage(hScintilla, SCI_INDICSETFORE, 0, RGB(255, 0, 0)); // Rouge
@@ -124,6 +133,7 @@ void Scintilla_SetTheme(HWND hScintilla, BOOL darkMode) {
 
     // Couleurs spécifiques
     SendMessage(hScintilla, SCI_SETCARETFORE, caretColor, 0);
+    SendMessage(hScintilla, SCI_SETCARETLINEBACK, darkMode ? RGB(50, 50, 50) : RGB(240, 240, 240), 0);
     
     // Marge des numéros de ligne
     SendMessage(hScintilla, SCI_STYLESETBACK, STYLE_LINENUMBER, darkMode ? RGB(45, 45, 45) : RGB(240, 240, 240));
@@ -141,4 +151,22 @@ void Scintilla_ClearErrors(HWND hScintilla) {
     int length = Scintilla_GetTextLength(hScintilla);
     SendMessage(hScintilla, SCI_SETINDICATORCURRENT, 0, 0);
     SendMessage(hScintilla, SCI_INDICATORCLEARRANGE, 0, length);
+}
+
+void Scintilla_UpdateBraceMatch(HWND hScintilla) {
+    if (!hScintilla) return;
+    int pos = (int)SendMessage(hScintilla, SCI_GETCURRENTPOS, 0, 0);
+    int charAtPos = (int)SendMessage(hScintilla, SCI_GETCHARAT, pos, 0);
+    
+    // Vérifier si le caractère est une parenthèse/accolade
+    if (strchr("()[]{}", charAtPos)) {
+        int match = (int)SendMessage(hScintilla, SCI_BRACEMATCH, pos, 0);
+        if (match != -1) {
+            SendMessage(hScintilla, SCI_BRACEHIGHLIGHT, pos, match);
+        } else {
+            SendMessage(hScintilla, SCI_BRACEBADLIGHT, pos, 0);
+        }
+    } else {
+        SendMessage(hScintilla, SCI_BRACEHIGHLIGHT, -1, -1);
+    }
 }
