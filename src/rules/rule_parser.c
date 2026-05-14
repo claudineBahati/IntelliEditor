@@ -4,7 +4,7 @@
 #include <cjson/cJSON.h>
 #include "rule_parser.h"
 
-// 🔹 Lire fichier entier
+//  Lire fichier entier
 static char* read_file(const char* filename) {
     FILE* file = fopen(filename, "rb");
     if (!file) {
@@ -36,15 +36,50 @@ static Rule parse_rule(cJSON* json_rule) {
     cJSON* parameter = cJSON_GetObjectItem(json_rule, "parameter");
     cJSON* flags = cJSON_GetObjectItem(json_rule, "flags");
 
-    if (id) rule.id = strdup(id->valuestring);
-    if (category) rule.category = strdup(category->valuestring);
-    if (severity) rule.severity = strdup(severity->valuestring);
-    if (description) rule.description = strdup(description->valuestring);
-    if (check_type) rule.check_type = strdup(check_type->valuestring);
+    if (id && cJSON_IsString(id))
+        rule.id = strdup(id->valuestring);
 
-    // 🔹 paramètre simple (string)
-    if (parameter && cJSON_IsString(parameter)) {
-        rule.parameter_str = strdup(parameter->valuestring);
+    if (category && cJSON_IsString(category))
+        rule.category = strdup(category->valuestring);
+
+    if (severity && cJSON_IsString(severity))
+        rule.severity = strdup(severity->valuestring);
+
+    if (description && cJSON_IsString(description))
+        rule.description = strdup(description->valuestring);
+
+    if (check_type && cJSON_IsString(check_type))
+        rule.check_type = strdup(check_type->valuestring);
+
+    // 🔹 parameter simple (string)
+    if (parameter) {
+        rule.parameter = cJSON_Duplicate(parameter, 1);
+    }
+    // 🔹 parameter objet pour word_count_min
+    else if (
+        parameter &&
+        cJSON_IsObject(parameter) &&
+        rule.check_type &&
+        (
+            strcmp(rule.check_type, "word_count_min") == 0 ||
+            strcmp(rule.check_type, "word_count_max") == 0
+        )
+    ){
+
+        cJSON* section = cJSON_GetObjectItem(parameter, "section");
+        cJSON* min_words = cJSON_GetObjectItem(parameter, "min_words");
+        cJSON* max_words = cJSON_GetObjectItem(parameter, "max_words");
+
+        if (section && cJSON_IsString(section)) {
+            rule.section = strdup(section->valuestring);
+        }
+
+        if (min_words && cJSON_IsNumber(min_words)) {
+            rule.min_words = min_words->valueint;
+        }
+        if (max_words && cJSON_IsNumber(max_words)) {
+            rule.max_words = max_words->valueint;
+        }
     }
 
     // 🔹 flags optionnel
@@ -55,7 +90,7 @@ static Rule parse_rule(cJSON* json_rule) {
     return rule;
 }
 
-// 🔹 Fonction principale
+//  Fonction principale
 RuleSet* load_rules(const char* file_path) {
     char* json_data = read_file(file_path);
     if (!json_data) return NULL;
@@ -102,7 +137,8 @@ void free_ruleset(RuleSet* ruleset) {
         free(r.severity);
         free(r.description);
         free(r.check_type);
-        free(r.parameter_str);
+        cJSON_Delete(r.parameter);
+        free(r.section);
         free(r.flags);
     }
 

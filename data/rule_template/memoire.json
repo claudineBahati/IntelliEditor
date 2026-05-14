@@ -53,6 +53,51 @@
         "description": "La problématique de recherche doit être explicitement posée",
         "check_type": "llm_semantic",
         "parameter": { "prompt": "Le texte de la section Introduction pose-t-il explicitement une problématique ou une question de recherche ?", "target_section": "Introduction" }
+      },{
+        "id": "R010",
+        "category": "structure",
+        "severity": "warning",
+        "description": "Les sections doivent apparaître dans l'ordre attendu",
+        "check_type": "section_order",
+        "parameter": [
+        "Résumé",
+        "Introduction",
+        "Revue de littérature",
+        "Méthodologie",
+        "Résultats",
+        "Discussion",
+        "Conclusion",
+        "Bibliographie"
+        ]
+        },
+        {
+          "id": "R011",
+          "category": "structure",
+          "severity": "critical",
+          "description": "Le document doit contenir une conclusion",
+          "check_type": "regex_required",
+          "parameter": "Conclusion",
+          "flags": "i"
+        },
+        {
+          "id": "R012",
+          "category": "structure",
+          "severity": "warning",
+          "description": "Le document doit contenir un chapitre numéroté",
+          "check_type": "regex_required",
+          "parameter": "Chapitre[ ]+[0-9]+",
+          "flags": "i"
+        },
+      {
+        "id": "R013",
+        "category": "longueur",
+        "severity": "warning",
+        "description": "La conclusion ne doit pas dépasser 500 mots",
+        "check_type": "word_count_max",
+        "parameter": {
+          "section": "Conclusion",
+          "max_words": 500
+        }
       }
     ]
   }
