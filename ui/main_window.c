@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <Scintilla.h>
 #include "rule_parser.h"
+#include "nlp/nlp_engine.h"
 
 // Déclaration de l'éditeur Scintilla
 static HWND hEditor = NULL;
@@ -200,7 +201,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             HDROP hDrop = (HDROP)wParam;
             char szFileName[MAX_PATH];
             if (DragQueryFile(hDrop, 0, szFileName, MAX_PATH)) {
-                LoadFileToEditor(hwnd, szFileName);
+                if (strstr(szFileName, ".json")) {
+                    // C'est probablement un fichier de règles
+                    RuleSet* new_rules = load_rules(szFileName);
+                    if (new_rules) {
+                        if (g_ruleset) free_ruleset(g_ruleset);
+                        g_ruleset = new_rules;
+                        RulesPanel_Clear(hRulesPanel);
+                        for (int i = 0; i < g_ruleset->count; i++) {
+                            char buffer[256];
+                            snprintf(buffer, sizeof(buffer), "[%s] %s", g_ruleset->rules[i].id, g_ruleset->rules[i].description);
+                            RulesPanel_AddRule(hRulesPanel, buffer);
+                        }
+                        apply_rules(hEditor, g_ruleset);
+                        MessageBox(hwnd, "Nouvelles règles chargées avec succès !", "Règles métier", MB_OK | MB_ICONINFORMATION);
+                    }
+                } else {
+                    LoadFileToEditor(hwnd, szFileName);
+                }
             }
             DragFinish(hDrop);
             break;
@@ -214,8 +232,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 int line = (int)SendMessage(hEditor, SCI_LINEFROMPOSITION, pos, 0);
                 int col = (int)SendMessage(hEditor, SCI_GETCOLUMN, pos, 0);
                 int words = Scintilla_GetWordCount(hEditor);
-                Statusbar_Update(hStatusbar, words, line + 1, col + 1);
+                Statusbar_Update(hStatusbar, words, line + 1, col + 1, "UTF-8");
                 Scintilla_UpdateBraceMatch(hEditor);
+
+                // Analyse NLP (Phase 3)
+                int len = Scintilla_GetTextLength(hEditor);
+                if (len > 0) {
+                    char* txt = malloc(len + 1);
+                    Scintilla_GetText(hEditor, txt, len + 1);
+                    CorrectionReport report = nlp_process_text(txt);
+                    Scintilla_ApplyNLPReport(hEditor, &report);
+                    nlp_free_report(&report);
+                    free(txt);
+                }
             }
             
             // Custom Draw pour le look Premium (Toolbar et Statusbar)
@@ -223,10 +252,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 LPNMCUSTOMDRAW lpnmcd = (LPNMCUSTOMDRAW)lParam;
                 if (phdr->hwndFrom == hToolbar || phdr->hwndFrom == hStatusbar) {
                     if (lpnmcd->dwDrawStage == CDDS_PREPAINT) {
-                        return CDRF_NOTIFYITEMDRAW;
+                        // Fond sombre pour Toolbar/Statusbar
+                        FillRect(lpnmcd->hdc, &lpnmcd->rc, hbrDarkBackground);
+                        return CDRF_NOTIFYPOSTPAINT;
                     }
                     if (lpnmcd->dwDrawStage == CDDS_ITEMPREPAINT) {
-                        SetTextColor(lpnmcd->hdc, RGB(220, 220, 220));
+                        // Couleur du texte en blanc pour les éléments
+                        SetTextColor(lpnmcd->hdc, RGB(220, 220, 225));
                         SetBkMode(lpnmcd->hdc, TRANSPARENT);
                         return CDRF_DODEFAULT;
                     }
@@ -276,6 +308,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             hBtnReplace = CreateWindow("BUTTON", "Remplacer", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 550, 7, 100, 25, hSearchBar, (HMENU)1010, GetModuleHandle(NULL), NULL);
             hBtnReplaceAll = CreateWindow("BUTTON", "Tous", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 655, 7, 60, 25, hSearchBar, (HMENU)1011, GetModuleHandle(NULL), NULL);
             
+            // Initialiser NLP
+            nlp_init("dictionaries/en.aff", "dictionaries/en.dic");
+
             // Activer le Drag & Drop
             DragAcceptFiles(hwnd, TRUE);
             break;
@@ -328,6 +363,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         case WM_DESTROY:
             if (hbrDarkBackground) DeleteObject(hbrDarkBackground);
             if (g_ruleset) free_ruleset(g_ruleset);
+            nlp_cleanup();
             PostQuitMessage(0);
             return 0;
             

@@ -120,24 +120,33 @@ int Scintilla_GetWordCount(HWND hScintilla) {
 void Scintilla_SetTheme(HWND hScintilla, BOOL darkMode) {
     if (!hScintilla) return;
 
-    COLORREF bgColor = darkMode ? RGB(30, 30, 30) : RGB(255, 255, 255);
-    COLORREF fgColor = darkMode ? RGB(220, 220, 220) : RGB(0, 0, 0);
+    COLORREF bgColor = darkMode ? RGB(28, 30, 38) : RGB(255, 255, 255);
+    COLORREF fgColor = darkMode ? RGB(220, 220, 225) : RGB(0, 0, 0);
     COLORREF caretColor = darkMode ? RGB(255, 255, 255) : RGB(0, 0, 0);
-
-    // Appliquer au style par défaut
+    COLORREF selColor = darkMode ? RGB(60, 70, 90) : RGB(200, 220, 255);
+    COLORREF lineNumBg = darkMode ? RGB(35, 38, 48) : RGB(240, 240, 240);
+    COLORREF lineNumFg = darkMode ? RGB(100, 110, 130) : RGB(128, 128, 128);
+    COLORREF caretLineBg = darkMode ? RGB(40, 44, 55) : RGB(240, 242, 250);
+    
+    // Appliquer les couleurs de base
     SendMessage(hScintilla, SCI_STYLESETBACK, STYLE_DEFAULT, bgColor);
     SendMessage(hScintilla, SCI_STYLESETFORE, STYLE_DEFAULT, fgColor);
-    
-    // Forcer le rafraîchissement de tous les styles basés sur STYLE_DEFAULT
     SendMessage(hScintilla, SCI_STYLECLEARALL, 0, 0);
-
+ 
     // Couleurs spécifiques
     SendMessage(hScintilla, SCI_SETCARETFORE, caretColor, 0);
-    SendMessage(hScintilla, SCI_SETCARETLINEBACK, darkMode ? RGB(50, 50, 50) : RGB(240, 240, 240), 0);
+    SendMessage(hScintilla, SCI_SETCARETLINEBACK, caretLineBg, 0);
+    SendMessage(hScintilla, SCI_SETCARETLINEBACKALPHA, 100, 0);
+    SendMessage(hScintilla, SCI_SETSELBACK, TRUE, selColor);
     
     // Marge des numéros de ligne
-    SendMessage(hScintilla, SCI_STYLESETBACK, STYLE_LINENUMBER, darkMode ? RGB(45, 45, 45) : RGB(240, 240, 240));
-    SendMessage(hScintilla, SCI_STYLESETFORE, STYLE_LINENUMBER, darkMode ? RGB(150, 150, 150) : RGB(100, 100, 100));
+    SendMessage(hScintilla, SCI_STYLESETBACK, STYLE_LINENUMBER, lineNumBg);
+    SendMessage(hScintilla, SCI_STYLESETFORE, STYLE_LINENUMBER, lineNumFg);
+    
+    // Correspondance des parenthèses
+    COLORREF braceColor = darkMode ? RGB(0, 255, 150) : RGB(255, 0, 0);
+    SendMessage(hScintilla, SCI_STYLESETFORE, STYLE_BRACELIGHT, braceColor);
+    SendMessage(hScintilla, SCI_STYLESETBOLD, STYLE_BRACELIGHT, TRUE);
 }
 
 void Scintilla_AddError(HWND hScintilla, int start, int length) {
@@ -147,10 +156,74 @@ void Scintilla_AddError(HWND hScintilla, int start, int length) {
 }
 
 void Scintilla_ClearErrors(HWND hScintilla) {
-    if (!hScintilla) return;
-    int length = Scintilla_GetTextLength(hScintilla);
+    int length = (int)SendMessage(hScintilla, SCI_GETTEXTLENGTH, 0, 0);
     SendMessage(hScintilla, SCI_SETINDICATORCURRENT, 0, 0);
     SendMessage(hScintilla, SCI_INDICATORCLEARRANGE, 0, length);
+    SendMessage(hScintilla, SCI_SETINDICATORCURRENT, 1, 0); // Pour la grammaire
+    SendMessage(hScintilla, SCI_INDICATORCLEARRANGE, 0, length);
+}
+
+void Scintilla_ApplyNLPReport(HWND hScintilla, void* report_ptr) {
+    if (!hScintilla || !report_ptr) return;
+    
+    // On doit inclure nlp_engine.h ici ou caster
+    // Pour éviter les dépendances circulaires, on cast en interne
+    typedef struct {
+        char* word;
+        int word_index;
+        char** suggestions;
+        int suggest_count;
+    } SpellingError;
+
+    typedef struct {
+        char original_phrase[256];
+        char suggested_correction[256];
+        char error_type[64];
+    } GrammarError;
+
+    typedef struct {
+        SpellingError* sp_errors;
+        int sp_error_count;
+        GrammarError* gr_errors;
+        int gr_error_count;
+    } CorrectionReport;
+
+    CorrectionReport* report = (CorrectionReport*)report_ptr;
+
+    // 1. Configurer les indicateurs
+    // Orthographe : Indicateur 0 (Rouge)
+    SendMessage(hScintilla, SCI_INDICSETSTYLE, 0, INDIC_SQUIGGLE);
+    SendMessage(hScintilla, SCI_INDICSETFORE, 0, RGB(255, 0, 0));
+
+    // Grammaire : Indicateur 1 (Bleu/Vert)
+    SendMessage(hScintilla, SCI_INDICSETSTYLE, 1, INDIC_SQUIGGLE);
+    SendMessage(hScintilla, SCI_INDICSETFORE, 1, RGB(0, 150, 0));
+
+    // 2. Parcourir les erreurs d'orthographe
+    // Note: nlp_engine donne des index de mots, on doit retrouver les positions
+    // Pour simplifier ici, on va chercher les mots dans le texte
+    int length = (int)SendMessage(hScintilla, SCI_GETTEXTLENGTH, 0, 0);
+    char* text = malloc(length + 1);
+    SendMessage(hScintilla, SCI_GETTEXT, length + 1, (LPARAM)text);
+
+    SendMessage(hScintilla, SCI_SETINDICATORCURRENT, 0, 0);
+    for (int i = 0; i < report->sp_error_count; i++) {
+        const char* word = report->sp_errors[i].word;
+        // Recherche simplifiée (on devrait idéalement utiliser les positions de la tokenization)
+        char* p = strstr(text, word);
+        if (p) {
+            int start = (int)(p - text);
+            SendMessage(hScintilla, SCI_INDICATORFILLRANGE, start, (int)strlen(word));
+        }
+    }
+
+    // 3. Parcourir les erreurs de grammaire
+    SendMessage(hScintilla, SCI_SETINDICATORCURRENT, 1, 0);
+    for (int i = 0; i < report->gr_error_count; i++) {
+        // Idem pour la grammaire
+    }
+
+    free(text);
 }
 
 void Scintilla_UpdateBraceMatch(HWND hScintilla) {

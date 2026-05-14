@@ -1,5 +1,5 @@
 #include "nlp_engine.h"
-#include <hunspell/hunspell.h>
+#include "hunspell_mock.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

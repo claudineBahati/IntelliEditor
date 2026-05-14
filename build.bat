@@ -14,6 +14,9 @@ gcc -o IntelliEditor.exe ^
     src/rules/checkers/contains_checker.c ^
     src/rules/checkers/regex_checker.c ^
     src/rules/checkers/count_checker.c ^
+    nlp/nlp_engine.c ^
+    nlp/tokenizer.c ^
+    nlp/hunspell_wrap.c ^
     src/libs/cjson/cJSON.c ^
     src/utils/encoding.c ^
     src/utils/debug_memory.c ^

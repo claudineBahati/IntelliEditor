@@ -1,5 +1,5 @@
 #include "hunspell_wrap.h"
-#include <hunspell/hunspell.h> // On appelle la vraie bibliothèque Hunspell
+#include "hunspell_mock.h" // Utilisation du mock car lib absente
 #include <stdio.h>
 
 // On crée un pointeur vers l'objet Hunspell (notre moteur de dictionnaire)

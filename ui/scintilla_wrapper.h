@@ -25,6 +25,7 @@ int Scintilla_GetWordCount(HWND hScintilla);
 void Scintilla_SetTheme(HWND hScintilla, BOOL darkMode);
 void Scintilla_AddError(HWND hScintilla, int start, int length);
 void Scintilla_ClearErrors(HWND hScintilla);
+void Scintilla_ApplyNLPReport(HWND hScintilla, void* report_ptr);
 void Scintilla_UpdateBraceMatch(HWND hScintilla);
 
 #endif // SCINTILLA_WRAPPER_H

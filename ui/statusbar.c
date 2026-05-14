@@ -22,7 +22,7 @@ HWND Statusbar_Create(HWND hParent) {
     return hStatus;
 }
 
-void Statusbar_Update(HWND hStatusbar, int words, int line, int col) {
+void Statusbar_Update(HWND hStatusbar, int words, int line, int col, const char* encoding) {
     if (!hStatusbar) return;
     
     char bufWords[64];
@@ -33,6 +33,9 @@ void Statusbar_Update(HWND hStatusbar, int words, int line, int col) {
     
     SendMessage(hStatusbar, SB_SETTEXT, 0, (LPARAM)bufWords);
     SendMessage(hStatusbar, SB_SETTEXT, 1, (LPARAM)bufPos);
+    if (encoding) {
+        SendMessage(hStatusbar, SB_SETTEXT, 2, (LPARAM)encoding);
+    }
 }
 
 void Statusbar_SetDarkMode(HWND hStatusbar, BOOL bDark) {
