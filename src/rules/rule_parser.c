@@ -1,7 +1,8 @@
+
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <cjson/cJSON.h>
+#include <stdlib.h>
+
 #include "rule_parser.h"
 
 //  Lire fichier entier
@@ -11,15 +12,14 @@ static char* read_file(const char* filename) {
         printf("Erreur ouverture fichier\n");
         return NULL;
     }
-
     fseek(file, 0, SEEK_END);
-    long size = ftell(file);
-    rewind(file);
-
-    char* buffer = (char*)malloc(size + 1);
-    fread(buffer, 1, size, file);
-    buffer[size] = '\0';
-
+    long length = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    char* buffer = malloc(length + 1);
+    if (buffer) {
+        fread(buffer, 1, length, file);
+        buffer[length] = '\0';
+    }
     fclose(file);
     return buffer;
 }

@@ -1,0 +1,66 @@
+
+{
+  "meta": {
+    "document_type": "Mémoire de Licence",
+    "version": "1.0",
+    "author": "Université Don Bosco de Lubumbashi",
+    "description": "Règles de rédaction pour les mémoires"
+  },
+
+  "rules": [
+
+    {
+      "id": "R001",
+      "category": "structure",
+      "severity": "error",
+      "description": "Le document doit contenir une section Introduction",
+      "check_type": "section_exists",
+      "parameter": "Introduction"
+    },
+
+    {
+      "id": "R002",
+      "category": "structure",
+      "severity": "error",
+      "description": "Le document doit contenir une section Conclusion",
+      "check_type": "section_exists",
+      "parameter": "Conclusion"
+    },
+
+    {
+      "id": "R003",
+      "category": "longueur",
+      "severity": "warning",
+      "description": "Minimum 20 mots",
+      "check_type": "word_count_min",
+      "parameter": "20"
+    },
+
+    {
+      "id": "R004",
+      "category": "style",
+      "severity": "warning",
+      "description": "Interdiction du mot je",
+      "check_type": "regex_forbidden",
+      "parameter": "je"
+    },
+
+    {
+      "id": "R005",
+      "category": "structure",
+      "severity": "warning",
+      "description": "Ordre des sections",
+      "check_type": "section_order",
+      "parameter": "Résumé,Introduction,Conclusion"
+    },
+
+    {
+      "id": "R006",
+      "category": "format",
+      "severity": "warning",
+      "description": "Université obligatoire",
+      "check_type": "regex_required",
+      "parameter": "Université Don Bosco de Lubumbashi"
+    }
+  ]
+}

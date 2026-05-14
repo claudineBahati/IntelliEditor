@@ -26,8 +26,8 @@ void apply_rules(HWND hEditor, RuleSet* ruleset) {
         Rule* r = &ruleset->rules[i];
         
         if (strcmp(r->check_type, "forbidden_word") == 0 || strcmp(r->check_type, "regex") == 0 || strcmp(r->check_type, "regex_forbidden") == 0) {
-            const char* pattern = r->parameter_str;
-            if (!pattern && r->parameter && r->parameter->valuestring) {
+            const char* pattern = NULL;
+            if (r->parameter && r->parameter->valuestring) {
                 pattern = r->parameter->valuestring;
             }
             if (!pattern) continue;

@@ -171,9 +171,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         int index = (int)SendMessage(hRulesPanel, LB_GETCURSEL, 0, 0);
                         if (index != LB_ERR && g_ruleset && index < g_ruleset->count) {
                             Rule* r = &g_ruleset->rules[index];
-                            if (r->parameter_str) {
+                            if (r->parameter && r->parameter->valuestring) {
                                 // Mettre le texte dans la barre de recherche et chercher
-                                SetWindowText(hSearchEdit, r->parameter_str);
+                                SetWindowText(hSearchEdit, r->parameter->valuestring);
                                 SendMessage(hwnd, WM_COMMAND, 1009, 0); // Simuler clic 'Suivant'
                             }
                         }

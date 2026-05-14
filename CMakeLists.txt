@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
 project(IntelliEditor VERSION 1.0 LANGUAGES C)
 
-# Utilisation du standard C11
+# --- Configuration du Standard C ---
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-# Options de compilation pour Windows (MinGW)
+# --- Options de compilation pour Windows ---
 if(WIN32)
     add_definitions(-DUNICODE -D_UNICODE)
-    # Pour déboguer, gardez la console activée
-    # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
+    # Masque la console en arrière-plan pour une application GUI pure
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
 endif()
 
 # Dossiers d'inclusion
@@ -24,6 +24,7 @@ include_directories(nlp)
 set(RULES_SRC
     src/rules/rule_parser.c
     src/rules/rule_engine.c
+    src/rules/rule_report.c
     src/rules/checkers/section_checker.c
     src/rules/checkers/contains_checker.c
     src/rules/checkers/count_checker.c
@@ -67,16 +68,16 @@ set(SOURCES
 # Création de l'exécutable
 add_executable(IntelliEditor ${SOURCES})
 
-# Ajout des tests unitaires de base pour la fondation technique
-option(BUILD_TESTS "Build unit tests" ON)
-enable_testing()
-if(BUILD_TESTS)
-    add_subdirectory(tests)
-endif()
-
-# Bibliothèques Windows standard nécessaires pour l'interface
+# Liens avec les bibliothèques
 if(WIN32)
-    target_link_libraries(IntelliEditor user32 gdi32 comctl32 comdlg32 shell32 rules_lib)
+    target_link_libraries(IntelliEditor
+            rules_lib
+            user32
+            gdi32
+            comctl32
+            comdlg32
+            shell32
+    )
 endif()
 
 # On lie les bibliothèques (Threads) pour le LLM
@@ -164,11 +165,13 @@ add_custom_command(TARGET test_regex_checker POST_BUILD
 )
 
 # Copier data
-add_custom_command(TARGET test_rules POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/data
-        ${CMAKE_BINARY_DIR}/data
-)
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/data")
+    add_custom_command(TARGET IntelliEditor POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/data
+            ${CMAKE_BINARY_DIR}/data
+    )
+endif()
 
 # 🔹 Activer les tests
 enable_testing()
