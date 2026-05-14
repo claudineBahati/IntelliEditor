@@ -1,4 +1,5 @@
 #include "encoding.h"
+#include "debug_memory.h"
 #include <stdlib.h>
 
 wchar_t* utf8_to_utf16(const char* utf8_str) {

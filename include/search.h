@@ -14,4 +14,25 @@
  */
 size_t search_find(const GapBuffer* gb, const char* query, size_t start_pos, bool case_sensitive);
 
+/**
+ * Remplace une occurrence de texte dans le Gap Buffer.
+ * @param gb Le buffer.
+ * @param query Le texte à chercher.
+ * @param replacement Le texte de remplacement.
+ * @param start_pos L'index de départ.
+ * @param case_sensitive True pour sensible à la casse.
+ * @return L'index de la fin de la chaîne remplacée, ou (size_t)-1 si non trouvé.
+ */
+size_t search_replace(GapBuffer* gb, const char* query, const char* replacement, size_t start_pos, bool case_sensitive);
+
+/**
+ * Remplace toutes les occurrences de texte dans le Gap Buffer.
+ * @param gb Le buffer.
+ * @param query Le texte à chercher.
+ * @param replacement Le texte de remplacement.
+ * @param case_sensitive True pour sensible à la casse.
+ * @return Le nombre de remplacements effectués.
+ */
+size_t search_replace_all(GapBuffer* gb, const char* query, const char* replacement, bool case_sensitive);
+
 #endif // SEARCH_H

@@ -60,6 +60,16 @@ void gb_move_cursor(GapBuffer* gb, int offset);
 char* gb_get_text(const GapBuffer* gb);
 
 /**
+ * Retourne la longueur effective du texte dans le Gap Buffer.
+ */
+size_t gb_get_length(const GapBuffer* gb);
+
+/**
+ * Récupère le caractère à l'index virtuel dans le Gap Buffer.
+ */
+char gb_get_char_at(const GapBuffer* gb, size_t index);
+
+/**
  * Fonctions de gestion des lignes (Infrastructure Dev A)
  */
 
