@@ -17,6 +17,8 @@ include_directories(include)
 include_directories(src)
 include_directories(ui)
 include_directories(src/editor)
+include_directories(llm)
+include_directories(nlp)
 
 # 🔹 ===== MODULE RULES =====
 set(RULES_SRC
@@ -25,6 +27,11 @@ set(RULES_SRC
 
 add_library(rules_lib ${RULES_SRC})
 # target_link_libraries(rules_lib cjson) # Commented out if cjson is not present yet
+
+# 🔹 ===== MODULE NLP & LLM =====
+set(NLP_SRC
+    llm/llm_thread.c
+)
 
 # Liste des fichiers source de l'application principale
 set(SOURCES
@@ -48,6 +55,8 @@ set(SOURCES
     ui/rules_panel.c
     ui/dialogs.c
     src/utils/memory_pool.c
+    # Ajout des fichiers LLM (DEV-C)
+    llm/llm_thread.c
 )
 
 # Création de l'exécutable
@@ -64,6 +73,10 @@ endif()
 if(WIN32)
     target_link_libraries(IntelliEditor user32 gdi32 comctl32 comdlg32 shell32 rules_lib)
 endif()
+
+# On lie les bibliothèques (Threads) pour le LLM
+find_package(Threads REQUIRED)
+target_link_libraries(IntelliEditor PRIVATE Threads::Threads)
 
 # 🔹 ===== TESTS =====
 # find_package(cmocka REQUIRED) # Commented out to avoid build break if not installed
