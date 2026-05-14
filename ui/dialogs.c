@@ -42,3 +42,7 @@ bool Dialog_SaveFile(HWND hParent, char* outFilePath, int maxLen) {
     }
     return false;
 }
+
+void Dialogs_ShowSettings(HWND hParent) {
+    MessageBox(hParent, "Paramètres de l'éditeur :\n- Police : Consolas\n- Taille : 12\n- Encodage : UTF-8\n- Thème : Sombre (Premium)", "Paramètres", MB_OK | MB_ICONINFORMATION);
+}

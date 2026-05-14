@@ -16,6 +16,7 @@ static HWND hEditor = NULL;
 static HWND hToolbar = NULL;
 static HWND hStatusbar = NULL;
 static HWND hRulesPanel = NULL;
+static HWND hTabCtrl = NULL;
 static HWND hSearchBar = NULL;
 static HWND hSearchEdit = NULL;
 static HWND hReplaceEdit = NULL;
@@ -68,6 +69,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
         case WM_COMMAND: {
             int wmId = LOWORD(wParam);
+            int wmEvent = HIWORD(wParam);
+
+            // Gestion de la sélection dans le panneau des règles
+            if (wmId == ID_RULES_PANEL && wmEvent == LBN_SELCHANGE) {
+                int idx = (int)SendMessage(hRulesPanel, LB_GETCURSEL, 0, 0);
+                if (idx != LB_ERR && g_ruleset && idx < g_ruleset->count) {
+                    Rule r = g_ruleset->rules[idx];
+                    if (r.parameter && cJSON_IsString(r.parameter)) {
+                        const char* pattern = r.parameter->valuestring;
+                        int len = (int)SendMessage(hEditor, SCI_GETTEXTLENGTH, 0, 0);
+                        char* txt = malloc(len + 1);
+                        SendMessage(hEditor, SCI_GETTEXT, len + 1, (LPARAM)txt);
+                        char* p = strstr(txt, pattern);
+                        if (p) {
+                            int start = (int)(p - txt);
+                            SendMessage(hEditor, SCI_SETSEL, start, start + (int)strlen(pattern));
+                            SendMessage(hEditor, SCI_SCROLLCARET, 0, 0);
+                        }
+                        free(txt);
+                    }
+                }
+            }
+
             switch (wmId) {
                 case IDM_FILE_NEW:
                     Scintilla_Clear(hEditor);
@@ -167,7 +191,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 case 1022:
                     MessageBox(hwnd, "Module IA (Dev-C) en cours d'intégration...", "Intelligence Artificielle", MB_OK | MB_ICONINFORMATION);
                     break;
-                case ID_RULESPANEL: {
+                case ID_RULES_PANEL: {
                     if (HIWORD(wParam) == LBN_SELCHANGE) {
                         int index = (int)SendMessage(hRulesPanel, LB_GETCURSEL, 0, 0);
                         if (index != LB_ERR && g_ruleset && index < g_ruleset->count) {
@@ -188,11 +212,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     Statusbar_SetDarkMode(hStatusbar, bDarkMode);
                     CheckMenuItem(GetMenu(hwnd), IDM_VIEW_DARKMODE, bDarkMode ? MF_CHECKED : MF_UNCHECKED);
                     
-                    // Forcer le rafraîchissement global
                     InvalidateRect(hwnd, NULL, TRUE);
                     InvalidateRect(hToolbar, NULL, TRUE);
                     InvalidateRect(hStatusbar, NULL, TRUE);
                     InvalidateRect(hRulesPanel, NULL, TRUE);
+                    break;
+
+                case IDM_VIEW_SETTINGS:
+                    Dialogs_ShowSettings(hwnd);
                     break;
             }
             break;
@@ -277,7 +304,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             hbrDarkBackground = CreateSolidBrush(RGB(45, 45, 45));
 
             // Créer le panneau des règles (à droite)
-            hRulesPanel = RulesPanel_Create(hwnd, 0, 0, 0, 0, ID_RULESPANEL);
+            hRulesPanel = RulesPanel_Create(hwnd, 0, 0, 0, 0, ID_RULES_PANEL);
 
             // Charger les règles métier
             g_ruleset = load_rules("data/rules.json");
@@ -295,6 +322,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             // Créer la zone Scintilla via le wrapper
             hEditor = Scintilla_Create(hwnd, 0, 0, 0, 0, ID_EDITOR);
 
+            // Créer les onglets (Phase 3)
+            hTabCtrl = CreateWindow(WC_TABCONTROL, "", WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, (HMENU)2006, GetModuleHandle(NULL), NULL);
+            TCITEM tie;
+            tie.mask = TCIF_TEXT;
+            tie.pszText = "Document 1";
+            SendMessage(hTabCtrl, TCM_INSERTITEM, 0, (LPARAM)&tie);
+            tie.pszText = "+";
+            SendMessage(hTabCtrl, TCM_INSERTITEM, 1, (LPARAM)&tie);
+
             // Créer la barre de recherche (cachée au début)
             hSearchBar = CreateWindowEx(0, "STATIC", "", WS_CHILD | WS_BORDER, 0, 0, 0, 0, hwnd, NULL, GetModuleHandle(NULL), NULL);
             
@@ -307,6 +343,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             hBtnNext = CreateWindow("BUTTON", "Suivant", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 465, 7, 80, 25, hSearchBar, (HMENU)1009, GetModuleHandle(NULL), NULL);
             hBtnReplace = CreateWindow("BUTTON", "Remplacer", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 550, 7, 100, 25, hSearchBar, (HMENU)1010, GetModuleHandle(NULL), NULL);
             hBtnReplaceAll = CreateWindow("BUTTON", "Tous", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 655, 7, 60, 25, hSearchBar, (HMENU)1011, GetModuleHandle(NULL), NULL);
+            CreateWindow("BUTTON", "X", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 720, 7, 25, 25, hSearchBar, (HMENU)IDM_EDIT_FIND, GetModuleHandle(NULL), NULL);
             
             // Initialiser NLP
             nlp_init("dictionaries/en.aff", "dictionaries/en.dic");
@@ -339,6 +376,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             int yEditor = tbHeight;
             int searchBarHeight = bShowSearchBar ? 40 : 0;
             
+            int tabHeight = 30;
+            if (hTabCtrl) {
+                SetWindowPos(hTabCtrl, NULL, 0, yEditor, width, tabHeight, SWP_NOZORDER | SWP_NOACTIVATE);
+                yEditor += tabHeight;
+            }
+
             if (bShowSearchBar) {
                 SetWindowPos(hSearchBar, NULL, 0, yEditor, width, searchBarHeight, SWP_NOZORDER | SWP_NOACTIVATE);
                 yEditor += searchBarHeight;
@@ -356,6 +399,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             }
             if (hRulesPanel) {
                 SetWindowPos(hRulesPanel, NULL, editorWidth, yEditor, rulesWidth, hEditorHeight, SWP_NOZORDER | SWP_NOACTIVATE);
+            }
+            break;
+        }
+
+        case WM_CONTEXTMENU: {
+            if ((HWND)wParam == hEditor) {
+                HMENU hCtx = CreatePopupMenu();
+                AppendMenu(hCtx, MF_STRING, IDM_EDIT_COPY, "Copier");
+                AppendMenu(hCtx, MF_STRING, IDM_EDIT_PASTE, "Coller");
+                AppendMenu(hCtx, MF_SEPARATOR, 0, NULL);
+                AppendMenu(hCtx, MF_STRING, 1030, "Demander à l'IA...");
+                
+                POINT pt;
+                GetCursorPos(&pt);
+                TrackPopupMenu(hCtx, TPM_RIGHTBUTTON, pt.x, pt.y, 0, hwnd, NULL);
+                DestroyMenu(hCtx);
             }
             break;
         }
@@ -423,6 +482,7 @@ AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hEditMenu, "Édition");
 // Menu Affichage
 HMENU hViewMenu = CreatePopupMenu();
 AppendMenu(hViewMenu, MF_STRING, IDM_VIEW_DARKMODE, "Mode Sombre");
+AppendMenu(hViewMenu, MF_STRING, IDM_VIEW_SETTINGS, "Paramètres...");
 AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hViewMenu, "Affichage");
 
 // Menu IA (Intégration Dev-C)

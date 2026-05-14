@@ -6,5 +6,6 @@
 
 bool Dialog_OpenFile(HWND hParent, char* outFilePath, int maxLen);
 bool Dialog_SaveFile(HWND hParent, char* outFilePath, int maxLen);
+void Dialogs_ShowSettings(HWND hParent);
 
 #endif // DIALOGS_H
