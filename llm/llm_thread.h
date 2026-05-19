@@ -1,15 +1,14 @@
 #ifndef LLM_THREAD_H
 #define LLM_THREAD_H
-
 #include <stdbool.h>
 
 // Structure pour configurer l'IA
 typedef struct {
-    const char *model_path;   // Chemin vers ton fichier llama-1b.gguf
+    const char *model_path;   // Chemin vers mon fichier llama-1b.gguf
     int n_threads;            // Nombre de coeurs CPU à utiliser
 } llm_config_t;
 
-// --- Fonctions que ton éditeur de texte utilisera ---
+// --- Fonctions que l' éditeur de texte utilisera ---
 
 // 1. Initialise et lance le "Worker Thread" en arrière-plan
 bool llm_thread_init(llm_config_t config);

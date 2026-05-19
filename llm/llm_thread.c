@@ -4,6 +4,7 @@
 #include <string.h>
 #include <pthread.h> 
 #include <windows.h>
+#include "llm_prompts.h"
 
 #define MAX_QUEUE 5
 #define MAX_TEXT 1024
@@ -52,23 +53,33 @@ static bool queue_pop(char* dest) {
 
 // --- Le Coeur du Worker (Consommateur) ---
 void* llm_worker_func(void* arg) {
-    char current_prompt[MAX_TEXT];
+    char user_input[MAX_TEXT];
+    char final_prompt[MAX_TEXT + 256]; // Buffer plus large pour accueillir le template
+
     while (is_running) {
-        if (queue_pop(current_prompt)) {
-            printf("\n[Thread] Je traite : %s\n", current_prompt);
+        if (queue_pop(user_input)) {
+            // --- ÉTAPE : PROMPT ENGINEERING ---
+            // On injecte le texte de l'utilisateur dans le template
+            snprintf(final_prompt, sizeof(final_prompt), PROMPT_CORRECTION_FORMAT, user_input);
             
-            // Simulation du calcul lourd (2 secondes)
+            // On affiche le prompt complet pour vérifier le formatage
+            printf("\n[Thread] Requête formatée : %s\n", final_prompt);
+            
+            // Simulation du calcul lourd (ex: inférence LLM)
             Sleep(2000); 
             
             pthread_mutex_lock(&queue_mutex);
-            snprintf(shared_response, sizeof(shared_response), "Fini : %s", current_prompt);
+            // On simule une réponse basée sur le prompt complet
+            snprintf(shared_response, sizeof(shared_response), "Version corrigée de : %s", user_input);
             pthread_mutex_unlock(&queue_mutex);
-            printf("[Thread] Travail termine.\n");
+            
+            printf("[Thread] Travail terminé.\n");
         }
-        Sleep(50); // Pause pour économiser le CPU
+        Sleep(50); 
     }
     return NULL;
 }
+
 
 // --- Implémentation API ---
 bool llm_thread_init(llm_config_t config) {
@@ -93,4 +104,16 @@ void llm_thread_stop() {
     is_running = false;
     pthread_join(worker_thread, NULL);
     pthread_mutex_destroy(&queue_mutex);
+}
+// Permet au main de récupérer la réponse simulée
+bool llm_thread_get_response(char *buffer, int buffer_size) {
+    pthread_mutex_lock(&queue_mutex);
+    if (shared_response[0] != '\0') {
+        strncpy(buffer, shared_response, buffer_size - 1);
+        shared_response[0] = '\0'; // On "vide" la réponse après lecture
+        pthread_mutex_unlock(&queue_mutex);
+        return true;
+    }
+    pthread_mutex_unlock(&queue_mutex);
+    return false;
 }

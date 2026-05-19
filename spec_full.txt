@@ -1,0 +1,32 @@
+﻿<USER_REQUEST>
+able des matiÃ¨res
+Projet C AvancÃ© (L3 GL / UDBL 25-26) â€” Logiciel de Traitement de Texte Intelligent en C
+Table des matiÃ¨res
+1. PrÃ©sentation du projet
+2. Objectifs et pÃ©rimÃ¨tre
+2.1 Objectifs principaux
+2.2 PÃ©rimÃ¨tre inclus
+2.3 PÃ©rimÃ¨tre exclu
+3. Architecture gÃ©nÃ©rale
+3.1 Principes architecturaux
+4. Modules fonctionnels
+4.1 Ã‰diteur de texte
+4.2 Interface utilisateur Win32 + Scintilla
+4.3 Moteur NLP â€” Correction franÃ§aise
+4.4 Moteur LLM embarquÃ©
+4.5 Moteur de rÃ¨gles mÃ©tier
+4.6 Couche systÃ¨me et fichiers
+5. Stack technique et dÃ©pendances
+6. Format du fichier de rÃ¨gles
+7. ModÃ¨les LLM recommandÃ©s
+8. RÃ©partition des tÃ¢ches â€” 4 dÃ©veloppeurs
+ResponsabilitÃ© de l'Ã©quipe
+Phases et objectifs
+ResponsabilitÃ©s par module
+DEV-A â€” Infrastructure & Ã‰diteur de texte
+DEV-B â€” Interface utilisateur Win32 + Scintilla
+DEV-C â€” LLM & Moteur NLP
+DEV-D â€” Moteur de rÃ¨gles & IntÃ©gration gÃ©nÃ©rale
+9. Collaboration, rendu et Ã©valuation
+9.1 Gestion du code source avec Git / GitHub
+<truncated 22169 bytes>
