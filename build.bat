@@ -30,6 +30,8 @@ gcc -o IntelliEditor.exe ^
     src/editor/file_io.c ^
     src/editor/search.c ^
     llm/llm_thread.c ^
+    llm/llm_interface.c ^
+    src/nlp/spellcheck.c ^
     -I. -Iui -Isrc -Iinclude -Isrc/rules -Isrc/models -Isrc/libs -Isrc/libs/cjson -Inlp -Illm -Isrc/editor -Isrc/utils -IC:/msys64/ucrt64/include ^
     -L"C:/msys64/ucrt64/lib" ^
     -luser32 -lcomctl32 -lgdi32 -lcomdlg32 -lshell32 -lpcre2-8 ^
