@@ -1,52 +1,72 @@
 #include <string.h>
-#include <cjson/cJSON.h>
+#include <ctype.h>
+#include <stdlib.h>
+
 #include "section_checker.h"
 
-int check_section_exists(const char* text, const char* section) {
-    if (!text || !section) return 0;
+/* ------------------------------------------------------------------ */
+/* Utilitaires internes                                                 */
+/* ------------------------------------------------------------------ */
 
-    return strstr(text, section) != NULL;
+/*
+ * Recherche insensible à la casse de *needle* dans *haystack*.
+ * Retourne un pointeur vers la première occurrence ou NULL.
+ */
+static const char *strcasestr_compat(const char *haystack,
+                                     const char *needle) {
+    if (!*needle) return haystack;
+
+    for (; *haystack; haystack++) {
+        const char *h = haystack;
+        const char *n = needle;
+        while (*h && *n && tolower((unsigned char)*h) ==
+                           tolower((unsigned char)*n)) {
+            h++;
+            n++;
+        }
+        if (!*n) return haystack;
+    }
+    return NULL;
 }
 
+/* ------------------------------------------------------------------ */
+/* check_section_exists                                                 */
+/* ------------------------------------------------------------------ */
+int check_section_exists(const char *document, const char *section) {
+    if (!document || !section || !*section) return 0;
+    return strcasestr_compat(document, section) != NULL;
+}
 
-int check_section_order(
-    const char* text,
-    cJSON* sections
-) {
+/* ------------------------------------------------------------------ */
+/* check_section_order                                                  */
+/* ------------------------------------------------------------------ */
+int check_section_order(const char *document, const char *parameter) {
+    if (!document || !parameter || !*parameter) return 1;
 
-    if (!text || !sections) {
-        return 0;
-    }
+    /* On travaille sur une copie modifiable */
+    char buf[512];
+    strncpy(buf, parameter, sizeof(buf) - 1);
+    buf[sizeof(buf) - 1] = '\0';
 
-    if (!cJSON_IsArray(sections)) {
-        return 0;
-    }
+    const char *last_pos = NULL; /* pointeur dans le document */
+    char *token = strtok(buf, ",");
 
-    int previous_position = -1;
+    while (token) {
+        /* Retire les espaces autour du token */
+        while (*token == ' ') token++;
+        char *end = token + strlen(token) - 1;
+        while (end > token && *end == ' ') *end-- = '\0';
 
-    int size = cJSON_GetArraySize(sections);
+        const char *found = strcasestr_compat(document, token);
 
-    for (int i = 0; i < size; i++) {
-
-        cJSON* item = cJSON_GetArrayItem(sections, i);
-
-        if (!cJSON_IsString(item)) {
-            return 0;
+        if (found) {
+            if (last_pos && found < last_pos)
+                return 0; /* ordre incorrect */
+            last_pos = found;
         }
+        /* Si la section n'est pas trouvée on ne pénalise pas l'ordre */
 
-        char* found = strstr(text, item->valuestring);
-
-        if (!found) {
-            return 0;
-        }
-
-        int current_position = found - text;
-
-        if (current_position < previous_position) {
-            return 0;
-        }
-
-        previous_position = current_position;
+        token = strtok(NULL, ",");
     }
 
     return 1;

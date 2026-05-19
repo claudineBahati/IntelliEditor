@@ -10,14 +10,15 @@ gcc -o IntelliEditor.exe ^
     ui/dialogs.c ^
     src/rules/rule_parser.c ^
     src/rules/rule_engine.c ^
+    src/rules/rule_report.c ^
     src/rules/checkers/section_checker.c ^
-    src/rules/checkers/contains_checker.c ^
+    src/rules/checkers/heading_checker.c ^
+    src/rules/checkers/citation_checker.c ^
     src/rules/checkers/regex_checker.c ^
     src/rules/checkers/count_checker.c ^
     nlp/nlp_engine.c ^
     nlp/tokenizer.c ^
     nlp/hunspell_wrap.c ^
-    src/libs/cjson/cJSON.c ^
     src/utils/encoding.c ^
     src/utils/debug_memory.c ^
     src/utils/memory_pool.c ^

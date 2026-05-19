@@ -11,6 +11,20 @@
 #include "rule_parser.h"
 #include "nlp/nlp_engine.h"
 
+RuleSet* load_rules(const char* file_path) {
+    RuleSet* rs = malloc(sizeof(RuleSet));
+    if (!rs) return NULL;
+    if (load_rules_from_file(file_path, rs) == 1) {
+        return rs;
+    }
+    free(rs);
+    return NULL;
+}
+
+void free_ruleset(RuleSet* ruleset) {
+    free(ruleset);
+}
+
 // Déclaration de l'éditeur Scintilla
 static HWND hEditor = NULL;
 static HWND hToolbar = NULL;
@@ -76,8 +90,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 int idx = (int)SendMessage(hRulesPanel, LB_GETCURSEL, 0, 0);
                 if (idx != LB_ERR && g_ruleset && idx < g_ruleset->count) {
                     Rule r = g_ruleset->rules[idx];
-                    if (r.parameter && cJSON_IsString(r.parameter)) {
-                        const char* pattern = r.parameter->valuestring;
+                    if (strlen(r.parameter) > 0) {
+                        const char* pattern = r.parameter;
                         int len = (int)SendMessage(hEditor, SCI_GETTEXTLENGTH, 0, 0);
                         char* txt = malloc(len + 1);
                         SendMessage(hEditor, SCI_GETTEXT, len + 1, (LPARAM)txt);
@@ -196,9 +210,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         int index = (int)SendMessage(hRulesPanel, LB_GETCURSEL, 0, 0);
                         if (index != LB_ERR && g_ruleset && index < g_ruleset->count) {
                             Rule* r = &g_ruleset->rules[index];
-                            if (r->parameter && r->parameter->valuestring) {
+                            if (strlen(r->parameter) > 0) {
                                 // Mettre le texte dans la barre de recherche et chercher
-                                SetWindowText(hSearchEdit, r->parameter->valuestring);
+                                SetWindowText(hSearchEdit, r->parameter);
                                 SendMessage(hwnd, WM_COMMAND, 1009, 0); // Simuler clic 'Suivant'
                             }
                         }
