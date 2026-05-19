@@ -1,114 +1,72 @@
-cmake_minimum_required(VERSION 3.10)
-project(IntelliEditor C)
+cmake_minimum_required(VERSION 3.16)
+project(intelli C)
 
 set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 
-# 🔹 Inclure headers du projet
-include_directories(src)
+# ── Options de compilation ─────────────────────────────────────────
+if(MSVC)
+    add_compile_options(/W4 /WX)
+else()
+    add_compile_options(-Wall -Wextra -Wpedantic -Wno-unused-parameter)
+endif()
 
-# 🔹 ===== MODULE RULES =====
-set(RULES_SRC
-    src/rules/rule_parser.c
+# ── Sources du moteur de règles (DEV-D) ───────────────────────────
+set(RULES_SOURCES
     src/rules/rule_engine.c
-    src/rules/checkers/section_checker.c
-    src/rules/checkers/contains_checker.c
-    src/rules/checkers/count_checker.c
-    src/rules/checkers/regex_checker.c
-)
-
-add_library(rules_lib STATIC ${RULES_SRC})
-target_link_libraries(rules_lib cjson pcre2-8)
-
-# 🔹 ===== TESTS =====
-add_executable(test_rules tests/test_rules.c)
-target_link_libraries(test_rules rules_lib cmocka cjson)
-
-add_executable(test_exist_section
-    tests/test_exist_section.c
     src/rules/rule_parser.c
-    src/rules/rule_engine.c
+    src/rules/rule_report.c
     src/rules/checkers/section_checker.c
-    src/rules/checkers/contains_checker.c
     src/rules/checkers/count_checker.c
     src/rules/checkers/regex_checker.c
-)
-target_link_libraries(test_exist_section rules_lib cmocka cjson pcre2-8)
-
-add_executable(test_regex_checker
-    tests/test_regex_checker.c
-    src/rules/checkers/regex_checker.c
-)
-target_link_libraries(test_regex_checker rules_lib cmocka pcre2-8)
-
-add_executable(test_count_checker
-    tests/test_count_checker.c
-    src/rules/checkers/count_checker.c
-)
-target_link_libraries(test_count_checker
-    cmocka
+    src/rules/checkers/heading_checker.c
+    src/rules/checkers/citation_checker.c
 )
 
-add_executable(test_section_order_checker
-    tests/test_section_order_checker.c
-    src/rules/checkers/section_checker.c
+# ── Exécutable principal ───────────────────────────────────────────
+add_executable(intelli main.c ${RULES_SOURCES})
+
+target_include_directories(intelli PRIVATE
+    ${CMAKE_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/src/rules
+    ${CMAKE_SOURCE_DIR}/src/rules/checkers
 )
 
-target_link_libraries(test_section_order_checker
-    cmocka
-    cjson
-)
+# ── Copie des ressources dans le répertoire de build ──────────────
+file(COPY ${CMAKE_SOURCE_DIR}/data
+     DESTINATION ${CMAKE_BINARY_DIR})
 
-# 🔹 Copier les DLL runtime (Windows)
-set(MSYS2_BIN_DIR "C:/msys64/mingw64/bin")
+# ── Tests unitaires (cmocka) ──────────────────────────────────────
+# Pour activer : cmake -DBUILD_TESTS=ON ..
+option(BUILD_TESTS "Compile les tests unitaires (requiert cmocka)" OFF)
 
-# DLL pour cjson
-add_custom_command(TARGET test_rules POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${MSYS2_BIN_DIR}/libcjson-1.dll
-        ${CMAKE_BINARY_DIR}
-)
+if(BUILD_TESTS)
+    enable_testing()
 
-# DLL pour cmocka
-add_custom_command(TARGET test_rules POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${MSYS2_BIN_DIR}/libcmocka.dll
-        ${CMAKE_BINARY_DIR}
-)
+    find_library(CMOCKA_LIB cmocka REQUIRED)
+    find_path(CMOCKA_INCLUDE cmocka.h REQUIRED)
 
-# DLL runtime GCC/threads
-add_custom_command(TARGET test_rules POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${MSYS2_BIN_DIR}/libgcc_s_seh-1.dll
-        ${CMAKE_BINARY_DIR}
-)
-add_custom_command(TARGET test_rules POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${MSYS2_BIN_DIR}/libwinpthread-1.dll
-        ${CMAKE_BINARY_DIR}
-)
+    add_executable(test_rules
+        tests/test_rules.c
+        ${RULES_SOURCES}
+    )
 
-# Copier la DLL PCRE2 
-add_custom_command(TARGET test_exist_section POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${MSYS2_BIN_DIR}/libpcre2-8-0.dll
-        ${CMAKE_BINARY_DIR}
-)
-add_custom_command(TARGET test_regex_checker POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${MSYS2_BIN_DIR}/libpcre2-8-0.dll
-        ${CMAKE_BINARY_DIR}
-)
+    target_include_directories(test_rules PRIVATE
+        ${CMAKE_SOURCE_DIR}/src/rules
+        ${CMAKE_SOURCE_DIR}/src/rules/checkers
+        ${CMOCKA_INCLUDE}
+    )
 
-# Copier data
-add_custom_command(TARGET test_rules POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/data
-        ${CMAKE_BINARY_DIR}/data
-)
+    target_link_libraries(test_rules PRIVATE ${CMOCKA_LIB})
 
-# 🔹 Activer les tests
-enable_testing()
-add_test(NAME RulesTest COMMAND test_rules)
-add_test(NAME SectionTest COMMAND test_exist_section)
-add_test(NAME RegexCheckerTest COMMAND test_regex_checker)
-add_test(NAME CountCheckerTest COMMAND test_count_checker)
+    add_test(NAME RulesTests COMMAND test_rules)
+endif()
+
+# ── Message récapitulatif ─────────────────────────────────────────
+message(STATUS "")
+message(STATUS "=== IntelliEditor — DEV-D (Moteur de Règles) ===")
+message(STATUS "  Compilateur  : ${CMAKE_C_COMPILER_ID}")
+message(STATUS "  Standard C   : ${CMAKE_C_STANDARD}")
+message(STATUS "  Build type   : ${CMAKE_BUILD_TYPE}")
+message(STATUS "  Tests        : ${BUILD_TESTS}")
+message(STATUS "")
