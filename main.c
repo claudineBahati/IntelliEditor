@@ -137,8 +137,8 @@ int main(int argc, char *argv[]) {
     /* ── Évalue et affiche ────────────────────────────────────────── */
     RuleReport report = evaluate_rules(&ruleset, document);
     print_rule_report(&report);
-
+    system("pause");
     free(file_buf);
-    system("pasuse");
+
     return 0;
 }
