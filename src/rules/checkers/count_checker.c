@@ -1,50 +1,81 @@
 #include <ctype.h>
+#include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
-#include "rules/checkers/count_checker.h"
+#include "count_checker.h"
 
-static int word_count_words(const char* text) {
-    int count = 0;
-    int in_word = 0;
+/* ------------------------------------------------------------------ */
+/* Comptage de mots                                                     */
+/* ------------------------------------------------------------------ */
+int count_words(const char *text) {
+    if (!text) return 0;
 
-    for (const char* p = text; *p; p++) {
-        if (isspace((unsigned char)*p)) {
+    int  words    = 0;
+    int  in_word  = 0;
+
+    while (*text) {
+        if (isspace((unsigned char)*text)) {
             in_word = 0;
         } else if (!in_word) {
+            words++;
             in_word = 1;
-            count++;
         }
+        text++;
     }
-
-    return count;
+    return words;
 }
 
-int check_min_word_count(const char* text, const char* section, int min_words) {
-    if (!text || !section) return 0;
-
-    const char* start = strstr(text, section);
-    if (!start) return 0;
-
-   
-    start += strlen(section);
-
-    int words = word_count_words(start);
-    return words >= min_words;
+int check_word_count_min(const char *text, int min_words) {
+    return count_words(text) >= min_words;
 }
 
-int check_max_word_count(const char* text, const char* section, int max_words) {
+int check_word_count_max(const char *text, int max_words) {
+    return count_words(text) <= max_words;
+}
 
-    if (!text || !section)
-        return 0;
+/* ------------------------------------------------------------------ */
+/* Extraction de la valeur numérique depuis le paramètre JSON          */
+/*                                                                      */
+/* Deux formes possibles :                                              */
+/*   1) simple : "300"                                                  */
+/*   2) objet  : { "section": "Introduction", "min_words": 300 }       */
+/*               { "section": "Résumé",       "max_words": 250 }       */
+/* ------------------------------------------------------------------ */
 
-    const char* start = strstr(text, section);
+static int extract_number_from_key(const char *param, const char *key) {
+    const char *p = strstr(param, key);
+    if (!p) return 0;
 
-    if (!start)
-        return 0;
+    p += strlen(key);
 
-    start += strlen(section);
+    /* Cherche ':' ou espace puis le nombre */
+    while (*p && (*p == ':' || *p == ' ' || *p == '\t' || *p == '"'))
+        p++;
 
-    int words = word_count_words(start);
+    if (*p == '\0') return 0;
+    return atoi(p);
+}
 
-    return words <= max_words;
+int extract_min_words(const char *parameter) {
+    if (!parameter || !*parameter) return 0;
+
+    /* Forme objet JSON → cherche "min_words" */
+    if (strchr(parameter, '{')) {
+        int v = extract_number_from_key(parameter, "\"min_words\"");
+        if (v > 0) return v;
+        /* Fallback : cherche juste un nombre */
+    }
+    return atoi(parameter);
+}
+
+int extract_max_words(const char *parameter) {
+    if (!parameter || !*parameter) return 0;
+
+    /* Forme objet JSON → cherche "max_words" */
+    if (strchr(parameter, '{')) {
+        int v = extract_number_from_key(parameter, "\"max_words\"");
+        if (v > 0) return v;
+    }
+    return atoi(parameter);
 }

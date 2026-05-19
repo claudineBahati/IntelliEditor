@@ -1,16 +1,65 @@
 #ifndef RULE_ENGINE_H
 #define RULE_ENGINE_H
 
-#include "models/rule_set.h"  // pour Rule et RuleSet
+#define MAX_RULES    128
+#define MAX_RESULTS  128
 
-//  Résultat d'une règle
+/* ------------------------------------------------------------------ */
+/* Statuts possibles pour une règle évaluée                            */
+/* ------------------------------------------------------------------ */
+typedef enum {
+    RULE_OK,       /* règle respectée                        */
+    RULE_WARNING,  /* règle partiellement respectée          */
+    RULE_ERROR,    /* règle clairement violée                */
+    RULE_PENDING   /* vérification LLM en attente / inconnue */
+} RuleStatus;
+
+/* ------------------------------------------------------------------ */
+/* Représente une règle issue du fichier JSON                          */
+/* ------------------------------------------------------------------ */
 typedef struct {
-    const char* rule_name;
-    int success;          // 1 = OK, 0 = FAIL
-    const char* message;  // "OK" ou "FAILED"
+    char id[32];
+    char category[64];
+    char severity[32];
+    char description[256];
+    char check_type[64];
+    char parameter[512];
+    char flags[128];
+    char target_section[128];
+} Rule;
+
+/* ------------------------------------------------------------------ */
+/* Ensemble de règles chargées depuis un fichier JSON                  */
+/* ------------------------------------------------------------------ */
+typedef struct {
+    Rule rules[MAX_RULES];
+    int  count;
+} RuleSet;
+
+/* ------------------------------------------------------------------ */
+/* Résultat de l'évaluation d'une règle                                */
+/* ------------------------------------------------------------------ */
+typedef struct {
+    char       rule_id[32];
+    RuleStatus status;
+    char       message[256];
 } RuleResult;
 
-//  Fonction principale du moteur
-RuleResult* evaluate_rules(RuleSet* ruleset, const char* text, int* result_count);
+/* ------------------------------------------------------------------ */
+/* Rapport global : agrégat de tous les résultats                      */
+/* ------------------------------------------------------------------ */
+typedef struct {
+    RuleResult results[MAX_RESULTS];
+    int        count;
+    int        ok_count;
+    int        warning_count;
+    int        error_count;
+    int        pending_count;
+} RuleReport;
 
-#endif
+/* ------------------------------------------------------------------ */
+/* API publique                                                         */
+/* ------------------------------------------------------------------ */
+RuleReport evaluate_rules(RuleSet *ruleset, const char *document);
+
+#endif /* RULE_ENGINE_H */
