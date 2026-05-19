@@ -32,6 +32,7 @@ set(SOURCES
     src/editor/file_io.c
     src/editor/search.c
     src/utils/memory_pool.c
+    src/nlp/spellcheck.c
 )
 
 # Création de l'exécutable
