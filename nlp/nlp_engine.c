@@ -1,5 +1,6 @@
 #include "nlp_engine.h"
 #include "hunspell_mock.h"
+#include "llm_interface.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,18 +27,24 @@ void check_semantic_rules(const char* text, CorrectionReport* report) {
     }
 }
 
+// --- MODIFICATION : APPEL RÉEL LLM ---
 void call_llm_grammar(const char* text, CorrectionReport* report) {
-    printf("[LLM Engine] Analyse de la structure : %s\n", text);
-    // Prochaine étape : intégration réelle de llama.cpp ici
+    printf("[LLM Engine] Analyse de la structure avec Cache KV...\n");
+    
+    // On appelle la fonction de génération réelle
+    char* ai_fix = llm_generate_paraphrase(text);
+    
+    if (ai_fix) {
+        printf("[LLM Suggestion] : %s\n", ai_fix);
+        free(ai_fix); // On libère la mémoire allouée par le moteur
+    }
 }
 
 CorrectionReport nlp_process_text(const char* text) {
     CorrectionReport report = { .sp_errors = NULL, .sp_error_count = 0, .gr_errors = NULL, .gr_error_count = 0 };
     
-    // Étape A : Utilisation de tes fonctions de tokenization
     TokenizedText tokens = nlp_tokenize(text);
 
-    // Étape B : Vérification Orthographique + SUGGESTIONS
     for (int i = 0; i < tokens.count; i++) {
         if (hb && Hunspell_spell(hb, tokens.words[i]) == 0) {
             SpellingError* temp = realloc(report.sp_errors, (report.sp_error_count + 1) * sizeof(SpellingError));
@@ -48,20 +55,15 @@ CorrectionReport nlp_process_text(const char* text) {
                 report.sp_errors[current].word = strdup(tokens.words[i]);
                 report.sp_errors[current].word_index = i;
 
-                // Récupération des suggestions Hunspell ---
                 char** slist;
                 int n_suggest = Hunspell_suggest(hb, &slist, tokens.words[i]);
                 
                 if (n_suggest > 0) {
-                    // On prend la première suggestion par défaut pour le rapport rapide
-                    // (On pourra en afficher plus dans l'interface plus tard)
                     report.sp_error_count++;
+                    Hunspell_free_list(hb, &slist, n_suggest);
                 } else {
                     report.sp_error_count++;
                 }
-                
-                // Note : Hunspell alloue 'slist', il faut normalement libérer slist avec Hunspell_free_list
-                if (n_suggest > 0) Hunspell_free_list(hb, &slist, n_suggest);
             }
         }
     }
@@ -92,20 +94,26 @@ void nlp_free_report(CorrectionReport* report) {
     report->gr_error_count = 0;
 }
 
+// --- MODIFICATION : GÉNÉRATION RÉELLE ---
 ParaphraseReport nlp_generate_paraphrase(const char* text) {
     ParaphraseReport report;
     report.suggestion_count = 0;
 
-    // Simulation de l'intelligence de reformulation
-    // Dans la phase suivante, ce bloc interrogera le modèle GGUF
     if (strlen(text) > 0) {
-        // Option 1 : Version plus formelle
-        snprintf(report.suggestions[0], 256, "The pupils are currently collaborating on the project.");
-        
-        // Option 2 : Version plus courte
-        snprintf(report.suggestions[1], 256, "Students are working on the task.");
-        
-        report.suggestion_count = 2;
+        // APPEL AU MOTEUR IA (Llama.cpp)
+        char* ai_suggestion = llm_generate_paraphrase(text);
+
+        if (ai_suggestion) {
+            // Suggestion 1 : Récupérée de l'IA
+            strncpy(report.suggestions[0], ai_suggestion, 255);
+            report.suggestions[0][255] = '\0';
+            
+            // Suggestion 2 : Variante simple (pour l'exemple)
+            snprintf(report.suggestions[1], 256, "Alternative: %s", ai_suggestion);
+            
+            report.suggestion_count = 2;
+            free(ai_suggestion);
+        }
     }
 
     return report;
