@@ -9,6 +9,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 int main() {
     printf("Starting IntelliEditor test...\n");
     fflush(stdout);
@@ -143,6 +147,10 @@ int main() {
         (undo_ok && redo_ok) ? "SUCCES" : "ECHEC");
 
     printf("%s\n", result);
+
+#ifdef _WIN32
+    MessageBoxA(NULL, result, "IntelliEditor - Execution Reussie", MB_OK | MB_ICONINFORMATION);
+#endif
 
     editor_destroy(editor);
     debug_memory_report();
