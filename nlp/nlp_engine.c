@@ -1,16 +1,15 @@
 #include "nlp_engine.h"
-#include "hunspell_mock.h"
+#include "spellcheck.h"
 #include "llm_interface.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-static Hunhandle* hb = NULL;
-
 bool nlp_init(const char* aff_path, const char* dic_path) {
-    hb = Hunspell_create(aff_path, dic_path);
-    return (hb != NULL);
+    // Initialiser notre correcteur orthographique local avec le dictionnaire français
+    printf("[NLP] Initialisation du correcteur avec dictionnaire_fr.txt...\n");
+    return spellcheck_init("dictionnaire_fr.txt");
 }
 
 void check_semantic_rules(const char* text, CorrectionReport* report) {
@@ -46,24 +45,42 @@ CorrectionReport nlp_process_text(const char* text) {
     TokenizedText tokens = nlp_tokenize(text);
 
     for (int i = 0; i < tokens.count; i++) {
-        if (hb && Hunspell_spell(hb, tokens.words[i]) == 0) {
+        const char* word = tokens.words[i];
+        if (strlen(word) == 0) continue;
+
+        // Éliminer les nombres et caractères non-alphabétiques
+        bool has_letter = false;
+        for (int k = 0; word[k]; k++) {
+            if (isalpha((unsigned char)word[k]) || (unsigned char)word[k] >= 128) {
+                has_letter = true;
+                break;
+            }
+        }
+        if (!has_letter) continue;
+
+        if (!spellcheck_is_correct(word)) {
             SpellingError* temp = realloc(report.sp_errors, (report.sp_error_count + 1) * sizeof(SpellingError));
             if (temp) {
                 report.sp_errors = temp;
                 int current = report.sp_error_count;
                 
-                report.sp_errors[current].word = strdup(tokens.words[i]);
+                report.sp_errors[current].word = strdup(word);
                 report.sp_errors[current].word_index = i;
 
-                char** slist;
-                int n_suggest = Hunspell_suggest(hb, &slist, tokens.words[i]);
+                // Récupérer les suggestions réelles de correction
+                SpellSuggestions suggestions = spellcheck_get_suggestions(word);
+                report.sp_errors[current].suggest_count = suggestions.count;
                 
-                if (n_suggest > 0) {
-                    report.sp_error_count++;
-                    Hunspell_free_list(hb, &slist, n_suggest);
+                if (suggestions.count > 0) {
+                    report.sp_errors[current].suggestions = malloc(suggestions.count * sizeof(char*));
+                    for (int s = 0; s < suggestions.count; s++) {
+                        report.sp_errors[current].suggestions[s] = strdup(suggestions.words[s]);
+                    }
                 } else {
-                    report.sp_error_count++;
+                    report.sp_errors[current].suggestions = NULL;
                 }
+                
+                report.sp_error_count++;
             }
         }
     }
@@ -76,20 +93,27 @@ CorrectionReport nlp_process_text(const char* text) {
 }
 
 void nlp_cleanup() {
-    if (hb) {
-        Hunspell_destroy(hb);
-        hb = NULL;
-    }
+    spellcheck_cleanup();
 }
 
 void nlp_free_report(CorrectionReport* report) {
     if (report->sp_errors) {
         for (int i = 0; i < report->sp_error_count; i++) {
             free(report->sp_errors[i].word);
+            if (report->sp_errors[i].suggestions) {
+                for (int s = 0; s < report->sp_errors[i].suggest_count; s++) {
+                    free(report->sp_errors[i].suggestions[s]);
+                }
+                free(report->sp_errors[i].suggestions);
+            }
         }
         free(report->sp_errors);
+        report->sp_errors = NULL;
     }
-    if (report->gr_errors) free(report->gr_errors);
+    if (report->gr_errors) {
+        free(report->gr_errors);
+        report->gr_errors = NULL;
+    }
     report->sp_error_count = 0;
     report->gr_error_count = 0;
 }

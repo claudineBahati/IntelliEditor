@@ -72,6 +72,39 @@ bool spellcheck_init(const char* dict_filepath) {
     }
 
     fclose(file);
+
+    // Ajouter des contractions et particules françaises courantes pour éviter les faux positifs
+    const char* french_particles[] = {
+        "l", "d", "c", "s", "j", "m", "t", "n", "qu", "lorsqu", "puisqu", "quoiqu",
+        "a", "à", "y", "o", "u", "g", "si", "et", "ou", "en", "un", "une", "le", "la", "les",
+        "se", "ce", "dans", "par", "pour", "avec", "sans", "sous", "sur", "chez", "mais", "donc", "car"
+    };
+    int num_particles = sizeof(french_particles) / sizeof(french_particles[0]);
+    for (int i = 0; i < num_particles; i++) {
+        char lower_word[MAX_WORD_LENGTH];
+        to_lowercase(lower_word, french_particles[i]);
+        unsigned long idx = hash_word(lower_word);
+        // Vérifier d'abord s'il n'existe pas déjà
+        bool exists = false;
+        DictNode* curr = dictionary[idx];
+        while (curr) {
+            if (strcmp(curr->word, lower_word) == 0) {
+                exists = true;
+                break;
+            }
+            curr = curr->next;
+        }
+        if (!exists) {
+            DictNode* new_node = (DictNode*)malloc(sizeof(DictNode));
+            if (new_node) {
+                strncpy(new_node->word, lower_word, MAX_WORD_LENGTH - 1);
+                new_node->word[MAX_WORD_LENGTH - 1] = '\0';
+                new_node->next = dictionary[idx];
+                dictionary[idx] = new_node;
+            }
+        }
+    }
+
     is_initialized = true;
     return true;
 }

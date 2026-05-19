@@ -28,4 +28,12 @@ void Scintilla_ClearErrors(HWND hScintilla);
 void Scintilla_ApplyNLPReport(HWND hScintilla, void* report_ptr);
 void Scintilla_UpdateBraceMatch(HWND hScintilla);
 
+// Variables de configuration globales (partagées)
+extern BOOL bDarkMode;
+extern int g_pageMargin;
+extern char g_fontName[32];
+extern int g_fontSize;
+extern int g_pageWidth;
+extern BOOL bShowLineNumbers;
+
 #endif // SCINTILLA_WRAPPER_H

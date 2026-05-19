@@ -1,4 +1,5 @@
 #include "scintilla_wrapper.h"
+#include "spellcheck.h"
 #include <Scintilla.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -38,19 +39,30 @@ HWND Scintilla_Create(HWND hParent, int x, int y, int width, int height, int id)
 void Scintilla_Configure(HWND hScintilla) {
     if (!hScintilla) return;
     
-    // Style par défaut
-    SendMessage(hScintilla, SCI_STYLESETFONT, STYLE_DEFAULT, (LPARAM)"Consolas");
-    SendMessage(hScintilla, SCI_STYLESETSIZE, STYLE_DEFAULT, 12);
+    // Style par défaut (MS Word-like dynamique)
+    SendMessage(hScintilla, SCI_STYLESETFONT, STYLE_DEFAULT, (LPARAM)g_fontName);
+    SendMessage(hScintilla, SCI_STYLESETSIZE, STYLE_DEFAULT, g_fontSize);
     
-    // Configurer la marge 0 pour afficher les numéros de ligne
+    // Configurer la marge de numéros de ligne (affichée ou cachée)
     SendMessage(hScintilla, SCI_SETMARGINTYPEN, 0, SC_MARGIN_NUMBER);
-    SendMessage(hScintilla, SCI_SETMARGINWIDTHN, 0, 40);
+    SendMessage(hScintilla, SCI_SETMARGINWIDTHN, 0, bShowLineNumbers ? 40 : 0);
+    
+    // Marges intérieures gauche/droite pour simuler une page
+    SendMessage(hScintilla, SCI_SETMARGINLEFT, 0, g_pageMargin);
+    SendMessage(hScintilla, SCI_SETMARGINRIGHT, 0, g_pageMargin);
+    
+    // Interligne aéré (comme Word 1.15)
+    SendMessage(hScintilla, SCI_SETEXTRAASCENT, 3, 0);
+    SendMessage(hScintilla, SCI_SETEXTRADESCENT, 3, 0);
     
     // Définir l'encodage par défaut à UTF-8
     SendMessage(hScintilla, SCI_SETCODEPAGE, SC_CP_UTF8, 0);
     
     // Activer le retour à la ligne automatique (word wrap)
     SendMessage(hScintilla, SCI_SETWRAPMODE, SC_WRAP_WORD, 0);
+
+    // Configurer la représentation visuelle du saut de page (\f)
+    SendMessage(hScintilla, SCI_SETREPRESENTATION, (WPARAM)"\x0c", (LPARAM)" [--------------------------------------- Saut de page ---------------------------------------] ");
 
     // Mettre en évidence la ligne courante
     SendMessage(hScintilla, SCI_SETCARETLINEVISIBLE, TRUE, 0);
@@ -61,9 +73,13 @@ void Scintilla_Configure(HWND hScintilla) {
     SendMessage(hScintilla, SCI_STYLESETFORE, STYLE_BRACELIGHT, RGB(255, 0, 0));
     SendMessage(hScintilla, SCI_STYLESETBOLD, STYLE_BRACELIGHT, TRUE);
 
-    // Configuration de l'indicateur d'erreur (Squiggle rouge)
+    // Configuration de l'indicateur d'erreur d'orthographe (0 - Rouge)
     SendMessage(hScintilla, SCI_INDICSETSTYLE, 0, INDIC_SQUIGGLE);
-    SendMessage(hScintilla, SCI_INDICSETFORE, 0, RGB(255, 0, 0)); // Rouge
+    SendMessage(hScintilla, SCI_INDICSETFORE, 0, RGB(255, 0, 0));
+
+    // Configuration de l'indicateur de grammaire/sémantique (1 - Vert)
+    SendMessage(hScintilla, SCI_INDICSETSTYLE, 1, INDIC_SQUIGGLE);
+    SendMessage(hScintilla, SCI_INDICSETFORE, 1, RGB(0, 150, 0));
 }
 
 void Scintilla_SetText(HWND hScintilla, const char* text) {
@@ -164,10 +180,64 @@ void Scintilla_ClearErrors(HWND hScintilla) {
 }
 
 void Scintilla_ApplyNLPReport(HWND hScintilla, void* report_ptr) {
-    if (!hScintilla || !report_ptr) return;
+    if (!hScintilla) return;
     
-    // On doit inclure nlp_engine.h ici ou caster
-    // Pour éviter les dépendances circulaires, on cast en interne
+    // Effacer les anciens indicateurs
+    Scintilla_ClearErrors(hScintilla);
+
+    int length = (int)SendMessage(hScintilla, SCI_GETTEXTLENGTH, 0, 0);
+    if (length <= 0) return;
+
+    char* text = malloc(length + 1);
+    if (!text) return;
+    SendMessage(hScintilla, SCI_GETTEXT, length + 1, (LPARAM)text);
+
+    // Définir l'indicateur d'orthographe actif (0)
+    SendMessage(hScintilla, SCI_SETINDICATORCURRENT, 0, 0);
+
+    // Parcourir le texte pour trouver les mots et leurs positions exactes
+    int wordStart = -1;
+    for (int i = 0; i <= length; i++) {
+        char c = text[i];
+        
+        // Délimiteurs de mots incluant ponctuation, espaces et symboles
+        BOOL isDelim = (c == '\0' || strchr(" ,.;:!?\n\r\t\"()[]{}<>=\\/*+-&|%^~`'\"", c) != NULL);
+
+        if (!isDelim) {
+            if (wordStart == -1) {
+                wordStart = i; // Début du mot
+            }
+        } else {
+            if (wordStart != -1) {
+                int wordLen = i - wordStart;
+                if (wordLen > 0 && wordLen < 64) {
+                    char word[64];
+                    memcpy(word, text + wordStart, wordLen);
+                    word[wordLen] = '\0';
+
+                    // S'assurer que le token contient au moins une lettre pour éviter de souligner la ponctuation/nombres
+                    BOOL hasLetter = FALSE;
+                    for (int k = 0; k < wordLen; k++) {
+                        if (isalpha((unsigned char)word[k]) || (unsigned char)word[k] >= 128) {
+                            hasLetter = TRUE;
+                            break;
+                        }
+                    }
+
+                    if (hasLetter) {
+                        // Si le mot est incorrect dans notre correcteur d'orthographe
+                        if (!spellcheck_is_correct(word)) {
+                            SendMessage(hScintilla, SCI_INDICATORFILLRANGE, wordStart, wordLen);
+                        }
+                    }
+                }
+                wordStart = -1;
+            }
+        }
+    }
+
+    // Gérer les erreurs de grammaire/sémantique (Indicateur 1 - Vert)
+    SendMessage(hScintilla, SCI_SETINDICATORCURRENT, 1, 0);
     typedef struct {
         char* word;
         int word_index;
@@ -189,38 +259,18 @@ void Scintilla_ApplyNLPReport(HWND hScintilla, void* report_ptr) {
     } CorrectionReport;
 
     CorrectionReport* report = (CorrectionReport*)report_ptr;
-
-    // 1. Configurer les indicateurs
-    // Orthographe : Indicateur 0 (Rouge)
-    SendMessage(hScintilla, SCI_INDICSETSTYLE, 0, INDIC_SQUIGGLE);
-    SendMessage(hScintilla, SCI_INDICSETFORE, 0, RGB(255, 0, 0));
-
-    // Grammaire : Indicateur 1 (Bleu/Vert)
-    SendMessage(hScintilla, SCI_INDICSETSTYLE, 1, INDIC_SQUIGGLE);
-    SendMessage(hScintilla, SCI_INDICSETFORE, 1, RGB(0, 150, 0));
-
-    // 2. Parcourir les erreurs d'orthographe
-    // Note: nlp_engine donne des index de mots, on doit retrouver les positions
-    // Pour simplifier ici, on va chercher les mots dans le texte
-    int length = (int)SendMessage(hScintilla, SCI_GETTEXTLENGTH, 0, 0);
-    char* text = malloc(length + 1);
-    SendMessage(hScintilla, SCI_GETTEXT, length + 1, (LPARAM)text);
-
-    SendMessage(hScintilla, SCI_SETINDICATORCURRENT, 0, 0);
-    for (int i = 0; i < report->sp_error_count; i++) {
-        const char* word = report->sp_errors[i].word;
-        // Recherche simplifiée (on devrait idéalement utiliser les positions de la tokenization)
-        char* p = strstr(text, word);
-        if (p) {
-            int start = (int)(p - text);
-            SendMessage(hScintilla, SCI_INDICATORFILLRANGE, start, (int)strlen(word));
+    if (report && report->gr_errors) {
+        for (int i = 0; i < report->gr_error_count; i++) {
+            // Surligner la première phrase incorrecte si présente dans le texte
+            const char* phrase = report->gr_errors[i].original_phrase;
+            if (strlen(phrase) > 0) {
+                char* p = strstr(text, phrase);
+                if (p) {
+                    int start = (int)(p - text);
+                    SendMessage(hScintilla, SCI_INDICATORFILLRANGE, start, (int)strlen(phrase));
+                }
+            }
         }
-    }
-
-    // 3. Parcourir les erreurs de grammaire
-    SendMessage(hScintilla, SCI_SETINDICATORCURRENT, 1, 0);
-    for (int i = 0; i < report->gr_error_count; i++) {
-        // Idem pour la grammaire
     }
 
     free(text);

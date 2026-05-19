@@ -14,9 +14,8 @@ HWND RulesPanel_Create(HWND hParent, int x, int y, int width, int height, int id
     );
 
     if (hList) {
-        SendMessage(hList, LB_ADDSTRING, 0, (LPARAM)"[OK] R001 - Introduction");
-        SendMessage(hList, LB_ADDSTRING, 0, (LPARAM)"[WARN] R002 - 1ere personne");
-        SendMessage(hList, LB_ADDSTRING, 0, (LPARAM)"[ERR] R003 - Titre H1");
+        HFONT hFont = CreateFont(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Segoe UI");
+        SendMessage(hList, WM_SETFONT, (WPARAM)hFont, TRUE);
     }
 
     return hList;

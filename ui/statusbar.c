@@ -17,7 +17,7 @@ HWND Statusbar_Create(HWND hParent) {
     SendMessage(hStatus, SB_SETTEXT, 0, (LPARAM)"Mots : 0");
     SendMessage(hStatus, SB_SETTEXT, 1, (LPARAM)"Ligne 1, Col 1");
     SendMessage(hStatus, SB_SETTEXT, 2, (LPARAM)"UTF-8 | FR");
-    SendMessage(hStatus, SB_SETTEXT, 3, (LPARAM)"Prêt");
+    SendMessage(hStatus, SB_SETTEXT, 3, (LPARAM)"Pret");
 
     return hStatus;
 }
