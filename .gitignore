@@ -70,3 +70,7 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# Presentation reports
+rapport_presentation_devb.md
+
