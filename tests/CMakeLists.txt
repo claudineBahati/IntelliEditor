@@ -12,6 +12,7 @@ set(TEST_SOURCES
     ../src/editor/exporter.c
     ../src/editor/editor_core.c
     ../src/utils/memory_pool.c
+    ../src/nlp/spellcheck.c
 )
 
 add_executable(IntelliEditorTests ${TEST_SOURCES})

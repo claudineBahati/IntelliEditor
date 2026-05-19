@@ -62,6 +62,8 @@ set(SOURCES
     src/utils/memory_pool.c
     # Ajout des fichiers LLM (DEV-C)
     llm/llm_thread.c
+    # Ajout des fichiers NLP (DEV-A)
+    src/nlp/spellcheck.c
 )
 
 # Création de l'exécutable
