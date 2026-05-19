@@ -1,3 +1,20 @@
+# Build folders
+build/
+build_editor/
+bin/
+obj/
+
+# Models and submodules
+models/
+llama.cpp/
+
+# VS Code settings
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
 # Prerequisites
 *.d
 

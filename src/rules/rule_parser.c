@@ -1,7 +1,11 @@
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+<<<<<<< HEAD
 #include <ctype.h>
+=======
+>>>>>>> 2b4f0c2296b45bbc0e0a7765efb831705e41095f
 
 #include "rule_parser.h"
 
@@ -161,6 +165,7 @@ static void extract_object_value(
 
         if (strchr(src, '}')) break;
     }
+<<<<<<< HEAD
 
     trim_json_value(output);
 }
@@ -265,6 +270,16 @@ int load_rules_from_file(const char *filename, RuleSet *ruleset) {
         }
     }
 
+=======
+    fseek(file, 0, SEEK_END);
+    long length = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    char* buffer = malloc(length + 1);
+    if (buffer) {
+        fread(buffer, 1, length, file);
+        buffer[length] = '\0';
+    }
+>>>>>>> 2b4f0c2296b45bbc0e0a7765efb831705e41095f
     fclose(file);
     return 1;
 }
@@ -280,4 +295,10 @@ void print_ruleset(const RuleSet *ruleset) {
                r->id, r->category, r->severity,
                r->check_type, r->parameter);
     }
+<<<<<<< HEAD
+=======
+
+    free(ruleset->rules);
+    free(ruleset);
+>>>>>>> 2b4f0c2296b45bbc0e0a7765efb831705e41095f
 }

@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+<<<<<<< HEAD
 #include "rule_engine.h"
 #include "rule_parser.h"
 #include "rule_report.h"
@@ -33,6 +34,9 @@
 #include "checkers/regex_checker.h"
 #include "checkers/heading_checker.h"
 #include "checkers/citation_checker.h"
+=======
+    RuleSet* ruleset = load_rules("data/rule_templates/memoiry_license.json");
+>>>>>>> 2b4f0c2296b45bbc0e0a7765efb831705e41095f
 
 /* ================================================================== */
 /* Données de test                                                      */

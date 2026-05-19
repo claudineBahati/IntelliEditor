@@ -1,7 +1,12 @@
+<<<<<<< HEAD
 # IntelliEditor — Module Moteur de Règles (DEV-D)
 
 Projet C Avancé — L3 GL / UDBL 25-26  
 Développeur : **DEV-D** — Moteur de règles & Intégration générale
+=======
+# IntelliEditor
+# Description du projet
+>>>>>>> 2b4f0c2296b45bbc0e0a7765efb831705e41095f
 
 ---
 
@@ -14,6 +19,7 @@ Développeur : **DEV-D** — Moteur de règles & Intégration générale
 | DEV-C | LLM & Moteur NLP (Hunspell + llama.cpp)           |
 | DEV-D | Moteur de règles & Intégration générale           |
 
+<<<<<<< HEAD
 ---
 
 ## Fonctionnalités implémentées (DEV-D)
@@ -153,3 +159,5 @@ ctest --output-on-failure
 - **DEV-C (LLM)** — appelle `update_rule_result()` lorsque la réponse LLM
   est disponible pour les règles `llm_semantic`.
 - **DEV-A (Éditeur)** — fournit le texte du document à `evaluate_rules()`.
+=======
+>>>>>>> 2b4f0c2296b45bbc0e0a7765efb831705e41095f

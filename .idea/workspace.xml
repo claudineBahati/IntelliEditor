@@ -29,11 +29,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="13232f89-0ace-4db4-9252-03f201e5e81f" name="Changes" comment="New files, refactored the all process">
-      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
-    </list>
+    <list default="true" id="13232f89-0ace-4db4-9252-03f201e5e81f" name="Changes" comment="New files, refactored the all process" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -139,7 +135,7 @@
       <workItem from="1778406541439" duration="28000" />
       <workItem from="1778407109998" duration="4027000" />
       <workItem from="1779175858320" duration="488000" />
-      <workItem from="1779184217388" duration="1764000" />
+      <workItem from="1779184217388" duration="2087000" />
     </task>
     <task id="LOCAL-00001" summary="implémentation du moteur de règles et du système de rapport">
       <option name="closed" value="true" />

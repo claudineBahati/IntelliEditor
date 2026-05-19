@@ -1,11 +1,23 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2b4f0c2296b45bbc0e0a7765efb831705e41095f
 {
   "meta": {
     "document_type": "Mémoire de Licence",
     "version": "1.0",
     "author": "Université Don Bosco de Lubumbashi",
+<<<<<<< HEAD
     "description": "Règles de rédaction pour les mémoires de Licence — promotion 2025-2026"
   },
   "rules": [
+=======
+    "description": "Règles de rédaction pour les mémoires"
+  },
+
+  "rules": [
+
+>>>>>>> 2b4f0c2296b45bbc0e0a7765efb831705e41095f
     {
       "id": "R001",
       "category": "structure",
@@ -14,6 +26,10 @@
       "check_type": "section_exists",
       "parameter": "Introduction"
     },
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2b4f0c2296b45bbc0e0a7765efb831705e41095f
     {
       "id": "R002",
       "category": "structure",
@@ -22,6 +38,7 @@
       "check_type": "section_exists",
       "parameter": "Conclusion"
     },
+<<<<<<< HEAD
     {
       "id": "R003",
       "category": "structure",
@@ -39,10 +56,23 @@
         "Bibliographie"
       ]
     },
+=======
+
+    {
+      "id": "R003",
+      "category": "longueur",
+      "severity": "warning",
+      "description": "Minimum 20 mots",
+      "check_type": "word_count_min",
+      "parameter": "20"
+    },
+
+>>>>>>> 2b4f0c2296b45bbc0e0a7765efb831705e41095f
     {
       "id": "R004",
       "category": "style",
       "severity": "warning",
+<<<<<<< HEAD
       "description": "Éviter l'emploi de la première personne du singulier",
       "check_type": "regex_forbidden",
       "parameter": "\\bje\\b|\\bj'|\\bme\\b|\\bmon\\b|\\bma\\b|\\bmes\\b",
@@ -122,6 +152,29 @@
       "check_type": "regex_required",
       "parameter": "Université Don Bosco|UDBL",
       "flags": "case_insensitive"
+=======
+      "description": "Interdiction du mot je",
+      "check_type": "regex_forbidden",
+      "parameter": "je"
+    },
+
+    {
+      "id": "R005",
+      "category": "structure",
+      "severity": "warning",
+      "description": "Ordre des sections",
+      "check_type": "section_order",
+      "parameter": "Résumé,Introduction,Conclusion"
+    },
+
+    {
+      "id": "R006",
+      "category": "format",
+      "severity": "warning",
+      "description": "Université obligatoire",
+      "check_type": "regex_required",
+      "parameter": "Université Don Bosco de Lubumbashi"
+>>>>>>> 2b4f0c2296b45bbc0e0a7765efb831705e41095f
     }
   ]
 }
