@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 cmake_minimum_required(VERSION 3.10)
 project(IntelliEditor VERSION 1.0 LANGUAGES C)
-=======
-cmake_minimum_required(VERSION 3.16)
-project(intelli C)
->>>>>>> origin/dev-d
 
 # --- Configuration du Standard C ---
 set(CMAKE_C_STANDARD 11)
