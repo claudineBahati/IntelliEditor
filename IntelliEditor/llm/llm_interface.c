@@ -54,6 +54,7 @@ char* llm_generate_paraphrase(const char* input_text) {
              "Alternatives:\n-", 
              input_text);
 
+             
     // --- ÉTAPE A : Tokenization ---
     int n_tokens_max = strlen(prompt) + 4; 
     llama_token * tokens = malloc(n_tokens_max * sizeof(llama_token));
