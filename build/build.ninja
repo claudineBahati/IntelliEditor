@@ -50,8 +50,46 @@ build CMakeFiles/rules_lib.dir/src/rules/rule_parser.c.obj: C_COMPILER__rules_li
   INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
   OBJECT_DIR = CMakeFiles\rules_lib.dir
   OBJECT_FILE_DIR = CMakeFiles\rules_lib.dir\src\rules
-  TARGET_COMPILE_PDB = CMakeFiles\rules_lib.dir\rules_lib.pdb
-  TARGET_PDB = librules_lib.pdb
+  TARGET_SUPPORT_DIR = CMakeFiles\rules_lib.dir
+
+build CMakeFiles/rules_lib.dir/src/rules/rule_engine.c.obj: C_COMPILER__rules_lib_unscanned_ C$:/Users/Claudine/IntelliEditor/src/rules/rule_engine.c || cmake_object_order_depends_target_rules_lib
+  DEP_FILE = CMakeFiles\rules_lib.dir\src\rules\rule_engine.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
+  OBJECT_DIR = CMakeFiles\rules_lib.dir
+  OBJECT_FILE_DIR = CMakeFiles\rules_lib.dir\src\rules
+  TARGET_SUPPORT_DIR = CMakeFiles\rules_lib.dir
+
+build CMakeFiles/rules_lib.dir/src/rules/checkers/section_checker.c.obj: C_COMPILER__rules_lib_unscanned_ C$:/Users/Claudine/IntelliEditor/src/rules/checkers/section_checker.c || cmake_object_order_depends_target_rules_lib
+  DEP_FILE = CMakeFiles\rules_lib.dir\src\rules\checkers\section_checker.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
+  OBJECT_DIR = CMakeFiles\rules_lib.dir
+  OBJECT_FILE_DIR = CMakeFiles\rules_lib.dir\src\rules\checkers
+  TARGET_SUPPORT_DIR = CMakeFiles\rules_lib.dir
+
+build CMakeFiles/rules_lib.dir/src/rules/checkers/contains_checker.c.obj: C_COMPILER__rules_lib_unscanned_ C$:/Users/Claudine/IntelliEditor/src/rules/checkers/contains_checker.c || cmake_object_order_depends_target_rules_lib
+  DEP_FILE = CMakeFiles\rules_lib.dir\src\rules\checkers\contains_checker.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
+  OBJECT_DIR = CMakeFiles\rules_lib.dir
+  OBJECT_FILE_DIR = CMakeFiles\rules_lib.dir\src\rules\checkers
+  TARGET_SUPPORT_DIR = CMakeFiles\rules_lib.dir
+
+build CMakeFiles/rules_lib.dir/src/rules/checkers/count_checker.c.obj: C_COMPILER__rules_lib_unscanned_ C$:/Users/Claudine/IntelliEditor/src/rules/checkers/count_checker.c || cmake_object_order_depends_target_rules_lib
+  DEP_FILE = CMakeFiles\rules_lib.dir\src\rules\checkers\count_checker.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
+  OBJECT_DIR = CMakeFiles\rules_lib.dir
+  OBJECT_FILE_DIR = CMakeFiles\rules_lib.dir\src\rules\checkers
+  TARGET_SUPPORT_DIR = CMakeFiles\rules_lib.dir
+
+build CMakeFiles/rules_lib.dir/src/rules/checkers/regex_checker.c.obj: C_COMPILER__rules_lib_unscanned_ C$:/Users/Claudine/IntelliEditor/src/rules/checkers/regex_checker.c || cmake_object_order_depends_target_rules_lib
+  DEP_FILE = CMakeFiles\rules_lib.dir\src\rules\checkers\regex_checker.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
+  OBJECT_DIR = CMakeFiles\rules_lib.dir
+  OBJECT_FILE_DIR = CMakeFiles\rules_lib.dir\src\rules\checkers
   TARGET_SUPPORT_DIR = CMakeFiles\rules_lib.dir
 
 
@@ -62,13 +100,12 @@ build CMakeFiles/rules_lib.dir/src/rules/rule_parser.c.obj: C_COMPILER__rules_li
 #############################################
 # Link the static library librules_lib.a
 
-build librules_lib.a: C_STATIC_LIBRARY_LINKER__rules_lib_ CMakeFiles/rules_lib.dir/src/rules/rule_parser.c.obj
+build librules_lib.a: C_STATIC_LIBRARY_LINKER__rules_lib_ CMakeFiles/rules_lib.dir/src/rules/rule_parser.c.obj CMakeFiles/rules_lib.dir/src/rules/rule_engine.c.obj CMakeFiles/rules_lib.dir/src/rules/checkers/section_checker.c.obj CMakeFiles/rules_lib.dir/src/rules/checkers/contains_checker.c.obj CMakeFiles/rules_lib.dir/src/rules/checkers/count_checker.c.obj CMakeFiles/rules_lib.dir/src/rules/checkers/regex_checker.c.obj
   OBJECT_DIR = CMakeFiles\rules_lib.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
-  TARGET_COMPILE_PDB = CMakeFiles\rules_lib.dir\rules_lib.pdb
   TARGET_FILE = librules_lib.a
-  TARGET_PDB = librules_lib.pdb
+  TARGET_PDB = rules_lib.a.dbg
   TARGET_SUPPORT_DIR = CMakeFiles\rules_lib.dir
 
 # =============================================================================
@@ -86,8 +123,6 @@ build CMakeFiles/test_rules.dir/tests/test_rules.c.obj: C_COMPILER__test_rules_u
   INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
   OBJECT_DIR = CMakeFiles\test_rules.dir
   OBJECT_FILE_DIR = CMakeFiles\test_rules.dir\tests
-  TARGET_COMPILE_PDB = CMakeFiles\test_rules.dir\
-  TARGET_PDB = test_rules.pdb
   TARGET_SUPPORT_DIR = CMakeFiles\test_rules.dir
 
 
@@ -99,15 +134,226 @@ build CMakeFiles/test_rules.dir/tests/test_rules.c.obj: C_COMPILER__test_rules_u
 # Link the executable test_rules.exe
 
 build test_rules.exe: C_EXECUTABLE_LINKER__test_rules_ CMakeFiles/test_rules.dir/tests/test_rules.c.obj | librules_lib.a || librules_lib.a
-  LINK_LIBRARIES = librules_lib.a  -lcmocka  -lcjson  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  LINK_LIBRARIES = librules_lib.a  -lcmocka  -lcjson  -lpcre2-8  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\test_rules.dir
   POST_BUILD = C:\Windows\system32\cmd.exe /C "cd /D C:\Users\Claudine\IntelliEditor\build && C:\msys64\mingw64\bin\cmake.exe -E copy_if_different C:/msys64/mingw64/bin/libcjson-1.dll C:/Users/Claudine/IntelliEditor/build && cd /D C:\Users\Claudine\IntelliEditor\build && C:\msys64\mingw64\bin\cmake.exe -E copy_if_different C:/msys64/mingw64/bin/libcmocka.dll C:/Users/Claudine/IntelliEditor/build && cd /D C:\Users\Claudine\IntelliEditor\build && C:\msys64\mingw64\bin\cmake.exe -E copy_if_different C:/msys64/mingw64/bin/libgcc_s_seh-1.dll C:/Users/Claudine/IntelliEditor/build && cd /D C:\Users\Claudine\IntelliEditor\build && C:\msys64\mingw64\bin\cmake.exe -E copy_if_different C:/msys64/mingw64/bin/libwinpthread-1.dll C:/Users/Claudine/IntelliEditor/build && cd /D C:\Users\Claudine\IntelliEditor\build && C:\msys64\mingw64\bin\cmake.exe -E copy_directory C:/Users/Claudine/IntelliEditor/data C:/Users/Claudine/IntelliEditor/build/data"
   PRE_LINK = cd .
-  TARGET_COMPILE_PDB = CMakeFiles\test_rules.dir\
   TARGET_FILE = test_rules.exe
   TARGET_IMPLIB = libtest_rules.dll.a
-  TARGET_PDB = test_rules.pdb
+  TARGET_PDB = test_rules.exe.dbg
   TARGET_SUPPORT_DIR = CMakeFiles\test_rules.dir
+
+# =============================================================================
+# Object build statements for EXECUTABLE target test_exist_section
+
+
+#############################################
+# Order-only phony target for test_exist_section
+
+build cmake_object_order_depends_target_test_exist_section: phony || cmake_object_order_depends_target_rules_lib
+
+build CMakeFiles/test_exist_section.dir/tests/test_exist_section.c.obj: C_COMPILER__test_exist_section_unscanned_ C$:/Users/Claudine/IntelliEditor/tests/test_exist_section.c || cmake_object_order_depends_target_test_exist_section
+  DEP_FILE = CMakeFiles\test_exist_section.dir\tests\test_exist_section.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
+  OBJECT_DIR = CMakeFiles\test_exist_section.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_exist_section.dir\tests
+  TARGET_SUPPORT_DIR = CMakeFiles\test_exist_section.dir
+
+build CMakeFiles/test_exist_section.dir/src/rules/rule_parser.c.obj: C_COMPILER__test_exist_section_unscanned_ C$:/Users/Claudine/IntelliEditor/src/rules/rule_parser.c || cmake_object_order_depends_target_test_exist_section
+  DEP_FILE = CMakeFiles\test_exist_section.dir\src\rules\rule_parser.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
+  OBJECT_DIR = CMakeFiles\test_exist_section.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_exist_section.dir\src\rules
+  TARGET_SUPPORT_DIR = CMakeFiles\test_exist_section.dir
+
+build CMakeFiles/test_exist_section.dir/src/rules/rule_engine.c.obj: C_COMPILER__test_exist_section_unscanned_ C$:/Users/Claudine/IntelliEditor/src/rules/rule_engine.c || cmake_object_order_depends_target_test_exist_section
+  DEP_FILE = CMakeFiles\test_exist_section.dir\src\rules\rule_engine.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
+  OBJECT_DIR = CMakeFiles\test_exist_section.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_exist_section.dir\src\rules
+  TARGET_SUPPORT_DIR = CMakeFiles\test_exist_section.dir
+
+build CMakeFiles/test_exist_section.dir/src/rules/checkers/section_checker.c.obj: C_COMPILER__test_exist_section_unscanned_ C$:/Users/Claudine/IntelliEditor/src/rules/checkers/section_checker.c || cmake_object_order_depends_target_test_exist_section
+  DEP_FILE = CMakeFiles\test_exist_section.dir\src\rules\checkers\section_checker.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
+  OBJECT_DIR = CMakeFiles\test_exist_section.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_exist_section.dir\src\rules\checkers
+  TARGET_SUPPORT_DIR = CMakeFiles\test_exist_section.dir
+
+build CMakeFiles/test_exist_section.dir/src/rules/checkers/contains_checker.c.obj: C_COMPILER__test_exist_section_unscanned_ C$:/Users/Claudine/IntelliEditor/src/rules/checkers/contains_checker.c || cmake_object_order_depends_target_test_exist_section
+  DEP_FILE = CMakeFiles\test_exist_section.dir\src\rules\checkers\contains_checker.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
+  OBJECT_DIR = CMakeFiles\test_exist_section.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_exist_section.dir\src\rules\checkers
+  TARGET_SUPPORT_DIR = CMakeFiles\test_exist_section.dir
+
+build CMakeFiles/test_exist_section.dir/src/rules/checkers/count_checker.c.obj: C_COMPILER__test_exist_section_unscanned_ C$:/Users/Claudine/IntelliEditor/src/rules/checkers/count_checker.c || cmake_object_order_depends_target_test_exist_section
+  DEP_FILE = CMakeFiles\test_exist_section.dir\src\rules\checkers\count_checker.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
+  OBJECT_DIR = CMakeFiles\test_exist_section.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_exist_section.dir\src\rules\checkers
+  TARGET_SUPPORT_DIR = CMakeFiles\test_exist_section.dir
+
+build CMakeFiles/test_exist_section.dir/src/rules/checkers/regex_checker.c.obj: C_COMPILER__test_exist_section_unscanned_ C$:/Users/Claudine/IntelliEditor/src/rules/checkers/regex_checker.c || cmake_object_order_depends_target_test_exist_section
+  DEP_FILE = CMakeFiles\test_exist_section.dir\src\rules\checkers\regex_checker.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
+  OBJECT_DIR = CMakeFiles\test_exist_section.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_exist_section.dir\src\rules\checkers
+  TARGET_SUPPORT_DIR = CMakeFiles\test_exist_section.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target test_exist_section
+
+
+#############################################
+# Link the executable test_exist_section.exe
+
+build test_exist_section.exe: C_EXECUTABLE_LINKER__test_exist_section_ CMakeFiles/test_exist_section.dir/tests/test_exist_section.c.obj CMakeFiles/test_exist_section.dir/src/rules/rule_parser.c.obj CMakeFiles/test_exist_section.dir/src/rules/rule_engine.c.obj CMakeFiles/test_exist_section.dir/src/rules/checkers/section_checker.c.obj CMakeFiles/test_exist_section.dir/src/rules/checkers/contains_checker.c.obj CMakeFiles/test_exist_section.dir/src/rules/checkers/count_checker.c.obj CMakeFiles/test_exist_section.dir/src/rules/checkers/regex_checker.c.obj | librules_lib.a || librules_lib.a
+  LINK_LIBRARIES = librules_lib.a  -lcmocka  -lcjson  -lpcre2-8  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\test_exist_section.dir
+  POST_BUILD = C:\Windows\system32\cmd.exe /C "cd /D C:\Users\Claudine\IntelliEditor\build && C:\msys64\mingw64\bin\cmake.exe -E copy_if_different C:/msys64/mingw64/bin/libpcre2-8-0.dll C:/Users/Claudine/IntelliEditor/build"
+  PRE_LINK = cd .
+  TARGET_FILE = test_exist_section.exe
+  TARGET_IMPLIB = libtest_exist_section.dll.a
+  TARGET_PDB = test_exist_section.exe.dbg
+  TARGET_SUPPORT_DIR = CMakeFiles\test_exist_section.dir
+
+# =============================================================================
+# Object build statements for EXECUTABLE target test_regex_checker
+
+
+#############################################
+# Order-only phony target for test_regex_checker
+
+build cmake_object_order_depends_target_test_regex_checker: phony || cmake_object_order_depends_target_rules_lib
+
+build CMakeFiles/test_regex_checker.dir/tests/test_regex_checker.c.obj: C_COMPILER__test_regex_checker_unscanned_ C$:/Users/Claudine/IntelliEditor/tests/test_regex_checker.c || cmake_object_order_depends_target_test_regex_checker
+  DEP_FILE = CMakeFiles\test_regex_checker.dir\tests\test_regex_checker.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
+  OBJECT_DIR = CMakeFiles\test_regex_checker.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_regex_checker.dir\tests
+  TARGET_SUPPORT_DIR = CMakeFiles\test_regex_checker.dir
+
+build CMakeFiles/test_regex_checker.dir/src/rules/checkers/regex_checker.c.obj: C_COMPILER__test_regex_checker_unscanned_ C$:/Users/Claudine/IntelliEditor/src/rules/checkers/regex_checker.c || cmake_object_order_depends_target_test_regex_checker
+  DEP_FILE = CMakeFiles\test_regex_checker.dir\src\rules\checkers\regex_checker.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
+  OBJECT_DIR = CMakeFiles\test_regex_checker.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_regex_checker.dir\src\rules\checkers
+  TARGET_SUPPORT_DIR = CMakeFiles\test_regex_checker.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target test_regex_checker
+
+
+#############################################
+# Link the executable test_regex_checker.exe
+
+build test_regex_checker.exe: C_EXECUTABLE_LINKER__test_regex_checker_ CMakeFiles/test_regex_checker.dir/tests/test_regex_checker.c.obj CMakeFiles/test_regex_checker.dir/src/rules/checkers/regex_checker.c.obj | librules_lib.a || librules_lib.a
+  LINK_LIBRARIES = librules_lib.a  -lcmocka  -lpcre2-8  -lcjson  -lpcre2-8  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\test_regex_checker.dir
+  POST_BUILD = C:\Windows\system32\cmd.exe /C "cd /D C:\Users\Claudine\IntelliEditor\build && C:\msys64\mingw64\bin\cmake.exe -E copy_if_different C:/msys64/mingw64/bin/libpcre2-8-0.dll C:/Users/Claudine/IntelliEditor/build"
+  PRE_LINK = cd .
+  TARGET_FILE = test_regex_checker.exe
+  TARGET_IMPLIB = libtest_regex_checker.dll.a
+  TARGET_PDB = test_regex_checker.exe.dbg
+  TARGET_SUPPORT_DIR = CMakeFiles\test_regex_checker.dir
+
+# =============================================================================
+# Object build statements for EXECUTABLE target test_count_checker
+
+
+#############################################
+# Order-only phony target for test_count_checker
+
+build cmake_object_order_depends_target_test_count_checker: phony || .
+
+build CMakeFiles/test_count_checker.dir/tests/test_count_checker.c.obj: C_COMPILER__test_count_checker_unscanned_ C$:/Users/Claudine/IntelliEditor/tests/test_count_checker.c || cmake_object_order_depends_target_test_count_checker
+  DEP_FILE = CMakeFiles\test_count_checker.dir\tests\test_count_checker.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
+  OBJECT_DIR = CMakeFiles\test_count_checker.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_count_checker.dir\tests
+  TARGET_SUPPORT_DIR = CMakeFiles\test_count_checker.dir
+
+build CMakeFiles/test_count_checker.dir/src/rules/checkers/count_checker.c.obj: C_COMPILER__test_count_checker_unscanned_ C$:/Users/Claudine/IntelliEditor/src/rules/checkers/count_checker.c || cmake_object_order_depends_target_test_count_checker
+  DEP_FILE = CMakeFiles\test_count_checker.dir\src\rules\checkers\count_checker.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
+  OBJECT_DIR = CMakeFiles\test_count_checker.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_count_checker.dir\src\rules\checkers
+  TARGET_SUPPORT_DIR = CMakeFiles\test_count_checker.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target test_count_checker
+
+
+#############################################
+# Link the executable test_count_checker.exe
+
+build test_count_checker.exe: C_EXECUTABLE_LINKER__test_count_checker_ CMakeFiles/test_count_checker.dir/tests/test_count_checker.c.obj CMakeFiles/test_count_checker.dir/src/rules/checkers/count_checker.c.obj
+  LINK_LIBRARIES = -lcmocka  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\test_count_checker.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = test_count_checker.exe
+  TARGET_IMPLIB = libtest_count_checker.dll.a
+  TARGET_PDB = test_count_checker.exe.dbg
+  TARGET_SUPPORT_DIR = CMakeFiles\test_count_checker.dir
+
+# =============================================================================
+# Object build statements for EXECUTABLE target test_section_order_checker
+
+
+#############################################
+# Order-only phony target for test_section_order_checker
+
+build cmake_object_order_depends_target_test_section_order_checker: phony || .
+
+build CMakeFiles/test_section_order_checker.dir/tests/test_section_order_checker.c.obj: C_COMPILER__test_section_order_checker_unscanned_ C$:/Users/Claudine/IntelliEditor/tests/test_section_order_checker.c || cmake_object_order_depends_target_test_section_order_checker
+  DEP_FILE = CMakeFiles\test_section_order_checker.dir\tests\test_section_order_checker.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
+  OBJECT_DIR = CMakeFiles\test_section_order_checker.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_section_order_checker.dir\tests
+  TARGET_SUPPORT_DIR = CMakeFiles\test_section_order_checker.dir
+
+build CMakeFiles/test_section_order_checker.dir/src/rules/checkers/section_checker.c.obj: C_COMPILER__test_section_order_checker_unscanned_ C$:/Users/Claudine/IntelliEditor/src/rules/checkers/section_checker.c || cmake_object_order_depends_target_test_section_order_checker
+  DEP_FILE = CMakeFiles\test_section_order_checker.dir\src\rules\checkers\section_checker.c.obj.d
+  FLAGS = -std=gnu11
+  INCLUDES = -IC:/Users/Claudine/IntelliEditor/src
+  OBJECT_DIR = CMakeFiles\test_section_order_checker.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_section_order_checker.dir\src\rules\checkers
+  TARGET_SUPPORT_DIR = CMakeFiles\test_section_order_checker.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target test_section_order_checker
+
+
+#############################################
+# Link the executable test_section_order_checker.exe
+
+build test_section_order_checker.exe: C_EXECUTABLE_LINKER__test_section_order_checker_ CMakeFiles/test_section_order_checker.dir/tests/test_section_order_checker.c.obj CMakeFiles/test_section_order_checker.dir/src/rules/checkers/section_checker.c.obj
+  LINK_LIBRARIES = -lcmocka  -lcjson  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\test_section_order_checker.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = test_section_order_checker.exe
+  TARGET_IMPLIB = libtest_section_order_checker.dll.a
+  TARGET_PDB = test_section_order_checker.exe.dbg
+  TARGET_SUPPORT_DIR = CMakeFiles\test_section_order_checker.dir
 
 
 #############################################
@@ -149,7 +395,15 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 
 build rules_lib: phony librules_lib.a
 
+build test_count_checker: phony test_count_checker.exe
+
+build test_exist_section: phony test_exist_section.exe
+
+build test_regex_checker: phony test_regex_checker.exe
+
 build test_rules: phony test_rules.exe
+
+build test_section_order_checker: phony test_section_order_checker.exe
 
 # =============================================================================
 # Folder targets.
@@ -159,7 +413,7 @@ build test_rules: phony test_rules.exe
 #############################################
 # Folder: C:/Users/Claudine/IntelliEditor/build
 
-build all: phony librules_lib.a test_rules.exe
+build all: phony librules_lib.a test_rules.exe test_exist_section.exe test_regex_checker.exe test_count_checker.exe test_section_order_checker.exe
 
 # =============================================================================
 # Built-in targets
@@ -168,14 +422,14 @@ build all: phony librules_lib.a test_rules.exe
 #############################################
 # Re-run CMake if any of its inputs changed.
 
-build build.ninja C$:/Users/Claudine/IntelliEditor/build/cmake_install.cmake C$:/Users/Claudine/IntelliEditor/build/CTestTestfile.cmake: RERUN_CMAKE | C$:/Users/Claudine/IntelliEditor/CMakeLists.txt C$:/msys64/mingw64/lib/cmake/cmocka/cmocka-config-version.cmake C$:/msys64/mingw64/lib/cmake/cmocka/cmocka-config.cmake C$:/msys64/mingw64/lib/cmake/cmocka/cmocka-targets-noconfig.cmake C$:/msys64/mingw64/lib/cmake/cmocka/cmocka-targets.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCCompiler.cmake.in C$:/msys64/mingw64/share/cmake/Modules/CMakeCCompilerABI.c C$:/msys64/mingw64/share/cmake/Modules/CMakeCInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCommonLanguageInclude.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCompilerIdDetection.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCompilerABI.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCompilerId.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCompilerSupport.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineRCCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineSystem.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeFindBinUtils.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeGenericSystem.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeInitializeConfigs.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeLanguageInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeNinjaFindMake.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeParseImplicitIncludeInfo.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeParseImplicitLinkInfo.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeParseLibraryArchitecture.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeRCCompiler.cmake.in C$:/msys64/mingw64/share/cmake/Modules/CMakeRCInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeSystem.cmake.in C$:/msys64/mingw64/share/cmake/Modules/CMakeSystemSpecificInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeTestCCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeTestCompilerCommon.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeTestRCCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/ADSP-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/ARMCC-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/ARMClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/AppleClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Borland-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Bruce-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Clang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Clang-DetermineCompilerInternal.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Compaq-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Cray-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/CrayClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Diab-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Embarcadero-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Fujitsu-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/FujitsuClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GHS-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU-FindBinUtils.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/HP-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/IAR-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/IBMCPP-C-DetermineVersionInternal.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/IBMClang-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Intel-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/IntelLLVM-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/LCC-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/MSVC-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/NVHPC-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/NVIDIA-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/OpenWatcom-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/OrangeC-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/PGI-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/PathScale-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Renesas-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/SCO-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/SDCC-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/SunPro-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/TI-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/TIClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Tasking-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/TinyCC-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/VisualAge-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Watcom-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/XL-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/XLClang-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/zOS-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeCLinkerInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeDetermineLinkerId.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeInspectCLinker.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/FeatureTesting.cmake C$:/msys64/mingw64/share/cmake/Modules/Linker/GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Linker/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/Windows-GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/Windows-GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-C-ABI.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-Initialize.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-windres.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/WindowsPaths.cmake CMakeCache.txt CMakeFiles/4.2.1/CMakeCCompiler.cmake CMakeFiles/4.2.1/CMakeRCCompiler.cmake CMakeFiles/4.2.1/CMakeSystem.cmake
+build build.ninja C$:/Users/Claudine/IntelliEditor/build/cmake_install.cmake C$:/Users/Claudine/IntelliEditor/build/CTestTestfile.cmake: RERUN_CMAKE | C$:/Users/Claudine/IntelliEditor/CMakeLists.txt C$:/msys64/mingw64/share/cmake/Modules/CMakeCInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCommonLanguageInclude.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeGenericSystem.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeInitializeConfigs.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeLanguageInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeRCInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeSystemSpecificInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeCLinkerInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/Linker/GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Linker/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/Windows-GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/Windows-GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-C-ABI.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-Initialize.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-windres.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/WindowsPaths.cmake CMakeCache.txt CMakeFiles/4.2.1/CMakeCCompiler.cmake CMakeFiles/4.2.1/CMakeRCCompiler.cmake CMakeFiles/4.2.1/CMakeSystem.cmake
   pool = console
 
 
 #############################################
 # A missing CMake input file is not an error.
 
-build C$:/Users/Claudine/IntelliEditor/CMakeLists.txt C$:/msys64/mingw64/lib/cmake/cmocka/cmocka-config-version.cmake C$:/msys64/mingw64/lib/cmake/cmocka/cmocka-config.cmake C$:/msys64/mingw64/lib/cmake/cmocka/cmocka-targets-noconfig.cmake C$:/msys64/mingw64/lib/cmake/cmocka/cmocka-targets.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCCompiler.cmake.in C$:/msys64/mingw64/share/cmake/Modules/CMakeCCompilerABI.c C$:/msys64/mingw64/share/cmake/Modules/CMakeCInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCommonLanguageInclude.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCompilerIdDetection.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCompilerABI.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCompilerId.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineCompilerSupport.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineRCCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeDetermineSystem.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeFindBinUtils.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeGenericSystem.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeInitializeConfigs.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeLanguageInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeNinjaFindMake.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeParseImplicitIncludeInfo.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeParseImplicitLinkInfo.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeParseLibraryArchitecture.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeRCCompiler.cmake.in C$:/msys64/mingw64/share/cmake/Modules/CMakeRCInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeSystem.cmake.in C$:/msys64/mingw64/share/cmake/Modules/CMakeSystemSpecificInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeTestCCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeTestCompilerCommon.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeTestRCCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/ADSP-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/ARMCC-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/ARMClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/AppleClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Borland-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Bruce-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Clang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Clang-DetermineCompilerInternal.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Compaq-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Cray-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/CrayClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Diab-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Embarcadero-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Fujitsu-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/FujitsuClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GHS-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU-FindBinUtils.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/HP-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/IAR-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/IBMCPP-C-DetermineVersionInternal.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/IBMClang-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Intel-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/IntelLLVM-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/LCC-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/MSVC-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/NVHPC-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/NVIDIA-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/OpenWatcom-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/OrangeC-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/PGI-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/PathScale-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Renesas-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/SCO-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/SDCC-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/SunPro-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/TI-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/TIClang-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Tasking-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/TinyCC-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/VisualAge-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/Watcom-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/XL-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/XLClang-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/zOS-C-DetermineCompiler.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeCLinkerInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeDetermineLinkerId.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeInspectCLinker.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/FeatureTesting.cmake C$:/msys64/mingw64/share/cmake/Modules/Linker/GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Linker/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/Windows-GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/Windows-GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-C-ABI.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-Initialize.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-windres.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/WindowsPaths.cmake CMakeCache.txt CMakeFiles/4.2.1/CMakeCCompiler.cmake CMakeFiles/4.2.1/CMakeRCCompiler.cmake CMakeFiles/4.2.1/CMakeSystem.cmake: phony
+build C$:/Users/Claudine/IntelliEditor/CMakeLists.txt C$:/msys64/mingw64/share/cmake/Modules/CMakeCInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeCommonLanguageInclude.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeGenericSystem.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeInitializeConfigs.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeLanguageInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeRCInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeSystemSpecificInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Compiler/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeCLinkerInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake C$:/msys64/mingw64/share/cmake/Modules/Linker/GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Linker/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/Windows-GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Linker/Windows-GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-C-ABI.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU-C.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-GNU.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-Initialize.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows-windres.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/Windows.cmake C$:/msys64/mingw64/share/cmake/Modules/Platform/WindowsPaths.cmake CMakeCache.txt CMakeFiles/4.2.1/CMakeCCompiler.cmake CMakeFiles/4.2.1/CMakeRCCompiler.cmake CMakeFiles/4.2.1/CMakeSystem.cmake: phony
 
 
 #############################################

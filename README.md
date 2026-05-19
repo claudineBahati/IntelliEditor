@@ -1,5 +1,4 @@
 # IntelliEditor
-
 # Description du projet
 
 IntelliEditor est un outil d’analyse et de traitement de fichiers texte.
@@ -27,5 +26,4 @@ Le projet est développé en équipe dans le cadre d’un travail académique.
  # Dev-D :  Moteur de règles & Intégration générale
      Moteur de règles & Intégration générale
      chargée du module : Claudine Bahati 
-
 

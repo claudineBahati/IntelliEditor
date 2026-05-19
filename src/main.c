@@ -1,3 +1,12 @@
+#include "editor_core.h"
+#include "encoding.h"
+#include "tokenizer.h"
+#include "exporter.h"
+#include "debug_memory.h"
+#include "search.h"
+#include "gap_buffer.h"
+#include "spellcheck.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> // Pour strcat et strlen
@@ -7,6 +16,10 @@
 
 
 #define MAX_DOC_SIZE 4096 // Taille max du document saisi
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 int main() {
     // On prépare un buffer pour stocker ce que l'utilisateur va taper

@@ -1,18 +1,71 @@
-Start testing: Apr 26 17:48 Afrique du Sud
+Start testing: May 09 09:38 Afrique du Sud
 ----------------------------------------------------------
-1/1 Testing: RulesTest
-1/1 Test: RulesTest
+1/4 Testing: RulesTest
+1/4 Test: RulesTest
 Command: "C:/Users/Claudine/IntelliEditor/build/test_rules.exe"
 Directory: C:/Users/Claudine/IntelliEditor/build
-"RulesTest" start time: Apr 26 17:48 Afrique du Sud
+"RulesTest" start time: May 09 09:38 Afrique du Sud
 Output:
 ----------------------------------------------------------
+[==========] tests: Running 1 test(s).
+[ RUN      ] test_load_rules
+START TEST
+AFTER LOAD
+RULE COUNT: 10
+[       OK ] test_load_rules
+[==========] tests: 1 test(s) run.
+[  PASSED  ] 1 test(s).
 <end of output>
-Test time =   0.59 sec
+Test time =   0.83 sec
 ----------------------------------------------------------
 Test Passed.
-"RulesTest" end time: Apr 26 17:48 Afrique du Sud
+"RulesTest" end time: May 09 09:38 Afrique du Sud
 "RulesTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Apr 26 17:48 Afrique du Sud
+2/4 Testing: SectionTest
+2/4 Test: SectionTest
+Command: "C:/Users/Claudine/IntelliEditor/build/test_exist_section.exe"
+Directory: C:/Users/Claudine/IntelliEditor/build
+"SectionTest" start time: May 09 09:38 Afrique du Sud
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.90 sec
+----------------------------------------------------------
+Test Passed.
+"SectionTest" end time: May 09 09:38 Afrique du Sud
+"SectionTest" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/4 Testing: RegexCheckerTest
+3/4 Test: RegexCheckerTest
+Command: "C:/Users/Claudine/IntelliEditor/build/test_regex_checker.exe"
+Directory: C:/Users/Claudine/IntelliEditor/build
+"RegexCheckerTest" start time: May 09 09:38 Afrique du Sud
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.73 sec
+----------------------------------------------------------
+Test Passed.
+"RegexCheckerTest" end time: May 09 09:38 Afrique du Sud
+"RegexCheckerTest" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/4 Testing: CountCheckerTest
+4/4 Test: CountCheckerTest
+Command: "C:/Users/Claudine/IntelliEditor/build/test_count_checker.exe"
+Directory: C:/Users/Claudine/IntelliEditor/build
+"CountCheckerTest" start time: May 09 09:38 Afrique du Sud
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.66 sec
+----------------------------------------------------------
+Test Passed.
+"CountCheckerTest" end time: May 09 09:38 Afrique du Sud
+"CountCheckerTest" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: May 09 09:38 Afrique du Sud

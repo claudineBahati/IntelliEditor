@@ -1,7 +1,12 @@
 # Build folders
 build/
+build_editor/
 bin/
 obj/
+
+# Models and submodules
+models/
+llama.cpp/
 
 # VS Code settings
 .vscode/

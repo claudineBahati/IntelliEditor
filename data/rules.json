@@ -1,0 +1,28 @@
+{
+    "rules": [
+        {
+            "id": "R001",
+            "category": "Style",
+            "severity": "Info",
+            "description": "Utiliser une introduction claire",
+            "check_type": "keyword",
+            "parameter": "Introduction"
+        },
+        {
+            "id": "R002",
+            "category": "Grammaire",
+            "severity": "Warning",
+            "description": "Éviter la première personne 'Je'",
+            "check_type": "regex",
+            "parameter": "\\bJe\\b"
+        },
+        {
+            "id": "R003",
+            "category": "Structure",
+            "severity": "Error",
+            "description": "Titre H1 manquant",
+            "check_type": "presence",
+            "parameter": "# "
+        }
+    ]
+}

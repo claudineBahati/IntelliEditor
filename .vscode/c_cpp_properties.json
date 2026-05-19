@@ -6,7 +6,6 @@
                 "${workspaceFolder}/**",
                 "C:/msys64/mingw64/include/cjson",
                 "C:/msys64/mingw64/include/pcre2"
-               
             ],
             "defines": [
                 "_DEBUG",
