@@ -1,11 +1,7 @@
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-<<<<<<< HEAD
 #include <ctype.h>
-=======
->>>>>>> 2b4f0c2296b45bbc0e0a7765efb831705e41095f
 
 #include "rule_parser.h"
 
@@ -56,7 +52,7 @@ static void extract_value(const char *line, char *output, size_t size) {
 
 /*
  * Extrait la valeur d'un tableau JSON sur une ligne du type :
- *   "parameter": ["Résumé","Introduction", ...],
+ * "parameter": ["Résumé","Introduction", ...],
  * ou sur des lignes séparées (on accumule).
  * Les éléments sont concaténés avec une virgule comme séparateur.
  */
@@ -127,7 +123,7 @@ static void extract_array_values(
 
 /*
  * Extrait la valeur d'un objet JSON inline du type :
- *   "parameter": { "level": 1, "case": "uppercase" }
+ * "parameter": { "level": 1, "case": "uppercase" }
  * → on retourne la chaîne brute entre accolades.
  */
 static void extract_object_value(
@@ -165,7 +161,6 @@ static void extract_object_value(
 
         if (strchr(src, '}')) break;
     }
-<<<<<<< HEAD
 
     trim_json_value(output);
 }
@@ -270,16 +265,6 @@ int load_rules_from_file(const char *filename, RuleSet *ruleset) {
         }
     }
 
-=======
-    fseek(file, 0, SEEK_END);
-    long length = ftell(file);
-    fseek(file, 0, SEEK_SET);
-    char* buffer = malloc(length + 1);
-    if (buffer) {
-        fread(buffer, 1, length, file);
-        buffer[length] = '\0';
-    }
->>>>>>> 2b4f0c2296b45bbc0e0a7765efb831705e41095f
     fclose(file);
     return 1;
 }
@@ -295,10 +280,4 @@ void print_ruleset(const RuleSet *ruleset) {
                r->id, r->category, r->severity,
                r->check_type, r->parameter);
     }
-<<<<<<< HEAD
-=======
-
-    free(ruleset->rules);
-    free(ruleset);
->>>>>>> 2b4f0c2296b45bbc0e0a7765efb831705e41095f
 }
